@@ -31,7 +31,7 @@ export const Sidebar = () => {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col h-full bg-white border-r shadow-sm w-[240px] fixed top-0 left-0 z-10">
+    <div className="flex flex-col h-screen bg-white border-r shadow-sm w-[240px]">
       
       <div className="flex items-center h-16 p-4 border-b">
         <span className="text-2xl font-bold text-blue-600">
