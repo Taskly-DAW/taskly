@@ -1,0 +1,122 @@
+services:
+  # PostgreSQL Database - Only accessible by auth_service
+  auth_db:
+    image: postgres:15-alpine
+    container_name: taskly_auth_db
+    environment:
+      POSTGRES_DB: auth_service
+      POSTGRES_USER: taskly_user
+      POSTGRES_PASSWORD: taskly_password
+      POSTGRES_INITDB_ARGS: "--auth-host=md5"
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/pgdata
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    # Remove external port exposure for security
+    # ports:
+    #   - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskly_user -d auth_service"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - auth_network  # Private network only for auth service
+
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: taskly_redpanda
+    command:
+      - redpanda
+      - start
+      - --overprovisioned
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 0
+      - --check=false
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
+      - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
+      - --rpc-addr redpanda:33145
+      - --advertise-rpc-addr redpanda:33145
+    ports:
+      - "9092:9092"
+      - "19092:19092"
+      - "8081:8081"
+      - "8082:8082"
+      - "18081:18081"
+      - "18082:18082"
+      - "9644:9644"
+    networks:
+      - taskly_network
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -q 'Healthy'"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:latest
+    container_name: taskly_redpanda_console
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      KAFKA_BROKERS: redpanda:9092
+      KAFKA_SCHEMAREGISTRY_ENABLED: true
+      KAFKA_SCHEMAREGISTRY_URLS: http://redpanda:8081
+    ports:
+      - "8080:8080"
+    networks:
+      - taskly_network
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    volumes:
+      - ./redpanda-console-config.yml:/tmp/config.yml
+
+  auth_service:
+    build: ./auth_service
+    container_name: taskly_auth_service
+    environment:
+      DB_HOST: auth_db
+      DB_PORT: 5432
+      DB_NAME: auth_service
+      DB_USER: taskly_user
+      DB_PASSWORD: taskly_password
+    ports:
+      - "8001:8000"
+    restart: unless-stopped
+    depends_on:
+      auth_db:
+        condition: service_healthy
+      redpanda:
+        condition: service_started
+    networks:
+      - auth_network     # Private network to access postgres
+      - taskly_network   # Shared network to communicate with other services
+
+  orchestrator:
+    build: ./orchestrator
+    depends_on:
+      - redpanda
+      - auth_service
+    networks:
+      - taskly_network
+
+volumes:
+  postgres_data:
+
+networks:
+  # Shared network for general service communication
+  taskly_network:
+    driver: bridge
+  
+  # Private network for auth_service <-> postgres communication only
+  auth_network:
+    driver: bridge
+    internal: true  # No external access

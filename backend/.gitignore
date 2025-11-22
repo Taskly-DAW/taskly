@@ -1,0 +1,371 @@
+# ====================================
+# Backend .gitignore for Taskly Project
+# ====================================
+
+# ============ Python ============
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+.coverage.*
+coverage.xml
+cov.xml
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.virtualenv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# ============ FastAPI / uvicorn ============
+*.log
+logs/
+.uvicorn.pid
+
+# ============ SQLAlchemy / Alembic ============
+# Migration versions (keep structure, ignore auto-generated)
+alembic/versions/*.py
+# But keep the alembic.ini and env.py
+!alembic/env.py
+!alembic/script.py.mako
+
+# ============ Docker ============
+# Docker files to ignore
+.dockerignore
+docker-compose.override.yml
+Dockerfile.prod
+.docker/
+
+# ============ PostgreSQL ============
+# PostgreSQL data
+postgres_data/
+pg_data/
+*.sql.backup
+*.dump
+
+# ============ Environment Files ============
+# Local environment files
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+.env.staging
+
+# Configuration files with sensitive data
+config/local.py
+config/secrets.py
+secrets.json
+credentials.json
+
+# ============ IDE / Editor ============
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ============ System Files ============
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.directory
+.fuse_hidden*
+.Trash-*
+.nfs*
+
+# ============ Logs ============
+# Application logs
+*.log
+logs/
+log/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ============ Node.js (for future frontend integration) ============
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production builds
+dist/
+build/
+
+# Environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ============ Backup Files ============
+# Database backups
+backups/
+*.backup
+*.bak
+*.sql.gz
+*.dump.gz
+
+# File backups
+*.orig
+*.backup
+
+# ============ Temporary Files ============
+# Temporary directories
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Cache directories
+.cache/
+cache/
+.pytest_cache/
+
+# ============ Security & Secrets ============
+# Keys and certificates
+*.key
+*.pem
+*.crt
+*.cert
+*.p12
+*.pfx
+
+# OAuth tokens
+.oauth
+
+# SSH keys
+id_rsa*
+id_ed25519*
+
+# ============ Development Tools ============
+# Linting
+.flake8
+.pylintrc
+pyrightconfig.json
+
+# Type checking
+.mypy_cache/
+.pytype/
+
+# Profiling
+*.prof
+
+# ============ Testing ============
+# Test reports
+test-reports/
+test_reports/
+junit.xml
+nosetests.xml
+
+# Test databases
+test.db
+test.sqlite
+test_*.db
+
+# ============ Monitoring & Observability ============
+# Prometheus
+prometheus_data/
+
+# Grafana
+grafana_data/
+
+# Jaeger
+jaeger_data/
+
+# ============ Message Queues ============
+# Redpanda / Kafka
+redpanda_data/
+kafka_data/
+kafka-logs/
+
+# ============ Miscellaneous ============
+# Compressed files
+*.zip
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+
+# Generated documentation
+docs/_build/
+docs/build/
+_build/
+
+# Static analysis
+.sonar/
+sonar-project.properties
+
+# Dependency check
+dependency-check-report.html
+
+# ============ Custom Project Files ============
+# Project specific temporary files
+scratch/
+notes/
+todo.txt
+NOTES.md
+
+# Local scripts
+local_*.sh
+dev_*.py
+
+# Local configuration overrides
+local_settings.py
+local_config.py
