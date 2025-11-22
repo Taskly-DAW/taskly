@@ -79,6 +79,24 @@ services:
     volumes:
       - ./redpanda-console-config.yml:/tmp/config.yml
 
+  api_gateway:
+    build: ./api_gateway
+    container_name: taskly_api_gateway
+    ports:
+      - "8000:8000"  # Main API Gateway port
+    restart: unless-stopped
+    depends_on:
+      - auth_service
+      - redpanda
+    networks:
+      - taskly_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
   auth_service:
     build: ./auth_service
     container_name: taskly_auth_service
@@ -88,8 +106,9 @@ services:
       DB_NAME: auth_service
       DB_USER: taskly_user
       DB_PASSWORD: taskly_password
-    ports:
-      - "8001:8000"
+    # Remove external port exposure - only accessible via API Gateway
+    # ports:
+    #   - "8001:8000"
     restart: unless-stopped
     depends_on:
       auth_db:
@@ -98,7 +117,7 @@ services:
         condition: service_started
     networks:
       - auth_network     # Private network to access postgres
-      - taskly_network   # Shared network to communicate with other services
+      - taskly_network   # Shared network to communicate with API Gateway
 
   orchestrator:
     build: ./orchestrator

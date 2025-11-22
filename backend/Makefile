@@ -13,12 +13,13 @@ help:
 	@echo ""
 	@echo "🔍 Monitoring:"
 	@echo "  logs           - Show logs from all services"
+	@echo "  logs-gateway   - Show API gateway logs"
 	@echo "  logs-auth      - Show auth service logs"
 	@echo "  logs-db        - Show database logs"
 	@echo "  logs-orchestrator - Show orchestrator logs"
 	@echo "  status         - Show container status"
 	@echo "  health         - Check service health"
-	@echo "  test-api       - Test API endpoints"
+	@echo "  test-api       - Test API endpoints via gateway"
 	@echo ""
 	@echo "🛠️ Development:"
 	@echo "  shell-auth     - Open shell in auth service container"
@@ -64,6 +65,10 @@ logs:
 	@echo "📋 Showing logs from all services..."
 	docker-compose logs -f
 
+logs-gateway:
+	@echo "📋 Showing API gateway logs..."
+	docker-compose logs -f api_gateway
+
 logs-auth:
 	@echo "📋 Showing auth service logs..."
 	docker-compose logs -f auth_service
@@ -82,12 +87,19 @@ status:
 
 health:
 	@echo "🔍 Checking service health..."
-	@echo "Auth Service: http://localhost:8001/health"
-	@if curl -s http://localhost:8001/health > /dev/null 2>&1; then \
-		echo " ✅ Auth Service: Healthy"; \
-		curl -s http://localhost:8001/health | python3 -m json.tool; \
+	@echo "API Gateway: http://localhost:8000/health"
+	@if curl -s http://localhost:8000/health > /dev/null 2>&1; then \
+		echo " ✅ API Gateway: Healthy"; \
+		curl -s http://localhost:8000/health | python3 -m json.tool; \
 	else \
-		echo " ❌ Auth Service: Unhealthy"; \
+		echo " ❌ API Gateway: Unhealthy"; \
+	fi
+	@echo ""
+	@echo "Auth Service (via Gateway): http://localhost:8000/auth/health"
+	@if curl -s http://localhost:8000/auth/health > /dev/null 2>&1; then \
+		echo " ✅ Auth Service (via Gateway): Healthy"; \
+	else \
+		echo " ❌ Auth Service (via Gateway): Unhealthy"; \
 	fi
 	@echo ""
 	@echo "Database:"
@@ -127,7 +139,8 @@ dev: build
 	@echo "🛠️ Starting development environment..."
 	docker-compose up -d
 	@echo "📱 Services available at:"
-	@echo "  - Auth Service: http://localhost:8001"
+	@echo "  - API Gateway: http://localhost:8000"
+	@echo "  - Auth Service (via Gateway): http://localhost:8000/auth/"
 	@echo "  - Redpanda Console: http://localhost:8080"
 
 test:
@@ -167,6 +180,10 @@ fix-auth:
 	./fix-auth.sh
 
 # Quick commands
+quick-restart-gateway:
+	@echo "🔄 Quick restart API gateway..."
+	docker-compose restart api_gateway
+
 quick-restart-auth:
 	@echo "🔄 Quick restart auth service..."
 	docker-compose restart auth_service
@@ -183,8 +200,44 @@ install-dev:
 # Show service URLs
 urls:
 	@echo "🌐 Service URLs:"
-	@echo "  📱 Auth Service API: http://localhost:8001"
-	@echo "  📊 Auth Service Health: http://localhost:8001/health"
+	@echo "  🌐 API Gateway: http://localhost:8000"
+	@echo "  📱 Auth Service (via Gateway): http://localhost:8000/auth/"
+	@echo "  📊 Gateway Health: http://localhost:8000/health"
+	@echo "  📊 Auth Health (via Gateway): http://localhost:8000/auth/health"
+
+# API Testing via Gateway
+test-api:
+	@echo "🧪 Testing API endpoints via Gateway..."
+	@echo "🔍 Testing Gateway Health..."
+	@curl -s http://localhost:8000/health | python3 -m json.tool || echo "❌ Gateway not responding"
+	@echo ""
+	@echo "🔍 Testing Auth Service via Gateway..."
+	@curl -s http://localhost:8000/auth/health | python3 -m json.tool || echo "❌ Auth service not responding via gateway"
+	@echo ""
+	@echo "🔍 Testing Auth Endpoints via Gateway..."
+	@echo "📋 Available auth endpoints:"
+	@echo "  POST /auth/auth/register - User registration"
+	@echo "  POST /auth/auth/login - User login"
+	@echo "  GET  /auth/auth/users - List users (authenticated)"
+	@echo "  GET  /auth/health - Health check"
+	@echo ""
+	@echo "🧪 Example registration test:"
+	@echo 'curl -X POST "http://localhost:8000/auth/auth/register" \'
+	@echo '  -H "Content-Type: application/json" \'
+	@echo '  -d '"'"'{"username":"user@test.com","password":"pass123","tenant_id":"tenant_1"}'"'"''
+
+# Build specific services
+build-gateway:
+	@echo "🏗️ Building API Gateway..."
+	docker-compose build api_gateway
+
+build-auth:
+	@echo "🏗️ Building Auth Service..."
+	docker-compose build auth_service
+
+build-orchestrator:
+	@echo "🏗️ Building Orchestrator..."
+	docker-compose build orchestrator
 	@echo "  📋 Auth Service Docs: http://localhost:8001/docs"
 	@echo "  🔄 Redpanda Console: http://localhost:9644"
 	@echo "  🗄️ Database: localhost:5432 (internal only)"
