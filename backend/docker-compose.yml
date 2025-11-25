@@ -1,5 +1,5 @@
 services:
-  # PostgreSQL Database - Only accessible by auth_service
+  # PostgreSQL Database for Auth Service
   auth_db:
     image: postgres:15-alpine
     container_name: taskly_auth_db
@@ -12,9 +12,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/pgdata
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
-    # Remove external port exposure for security
-    # ports:
-    #   - "5432:5432"
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U taskly_user -d auth_service"]
@@ -23,7 +20,48 @@ services:
       retries: 5
       start_period: 30s
     networks:
-      - auth_network  # Private network only for auth service
+      - auth_network
+
+  # PostgreSQL Database for Task Service
+  task_db:
+    image: postgres:15-alpine
+    container_name: taskly_task_db
+    environment:
+      POSTGRES_DB: task_service_db
+      POSTGRES_USER: taskly_user
+      POSTGRES_PASSWORD: taskly_password
+      POSTGRES_INITDB_ARGS: "--auth-host=md5"
+      PGDATA: /var/lib/postgresql/data/pgdata_task
+    volumes:
+      - postgres_data_task:/var/lib/postgresql/data/pgdata_task
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskly_user -d task_service_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - taskly_network # Connect to the shared network
+
+  # Alembic migration service for Task Service
+  alembic_migrate:
+    build:
+      context: ./task_service
+      dockerfile: Dockerfile.alembic
+    container_name: taskly_alembic_migrate
+    depends_on:
+      task_db:
+        condition: service_healthy
+    networks:
+      - taskly_network
+    volumes:
+      # Mount the alembic directory so that migration scripts are persistent
+      - ./task_service/alembic:/app/alembic
+      - ./task_service/alembic.ini:/app/alembic.ini
+      - ./task_service/app:/app/app
+    command: ["alembic", "upgrade", "head"]
 
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:latest
@@ -83,11 +121,12 @@ services:
     build: ./api_gateway
     container_name: taskly_api_gateway
     ports:
-      - "8000:8000"  # Main API Gateway port
+      - "8000:8000"
     restart: unless-stopped
     depends_on:
       - auth_service
       - redpanda
+      - task_service # Add dependency on task_service
     networks:
       - taskly_network
     healthcheck:
@@ -106,9 +145,6 @@ services:
       DB_NAME: auth_service
       DB_USER: taskly_user
       DB_PASSWORD: taskly_password
-    # Remove external port exposure - only accessible via API Gateway
-    # ports:
-    #   - "8001:8000"
     restart: unless-stopped
     depends_on:
       auth_db:
@@ -116,26 +152,46 @@ services:
       redpanda:
         condition: service_started
     networks:
-      - auth_network     # Private network to access postgres
-      - taskly_network   # Shared network to communicate with API Gateway
+      - auth_network
+      - taskly_network
+
+  task_service:
+    build: ./task_service
+    container_name: taskly_task_service
+    environment:
+      DB_HOST: task_db
+      DB_PORT: 5432
+      DB_NAME: task_service_db
+      DB_USER: taskly_user
+      DB_PASSWORD: taskly_password
+    ports:
+      - "8002:8000" # Expose task service on port 8002
+    restart: unless-stopped
+    depends_on:
+      task_db:
+        condition: service_healthy
+      redpanda:
+        condition: service_started
+    networks:
+      - taskly_network
 
   orchestrator:
     build: ./orchestrator
     depends_on:
       - redpanda
       - auth_service
+      - task_service # Add dependency on task_service
     networks:
       - taskly_network
 
 volumes:
   postgres_data:
+  postgres_data_task: # New volume for task_db
 
 networks:
-  # Shared network for general service communication
   taskly_network:
     driver: bridge
   
-  # Private network for auth_service <-> postgres communication only
   auth_network:
     driver: bridge
-    internal: true  # No external access
+    internal: true

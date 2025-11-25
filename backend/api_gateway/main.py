@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 SERVICE_URLS = {
     "auth_service": "http://auth_service:8000",
     "notification_service": "http://notification_service:8000",
+    "task_service": "http://task_service:8000", # Add task service
 }
 
 # Global HTTP client
@@ -88,6 +89,7 @@ async def root():
         "endpoints": {
             "/auth/*": "Authentication service",
             "/notifications/*": "Notification service",
+            "/tasks/*": "Task management service", # Add task service endpoint
             "/health": "Health check",
             "/docs": "API documentation"
         }
@@ -184,6 +186,27 @@ async def auth_proxy(path: str, request: Request):
 async def notifications_proxy(path: str, request: Request):
     """Proxy requests to notification service"""
     return await proxy_request("notification_service", path, request)
+
+# Task service routes
+@app.get("/tasks/openapi.json")
+async def task_openapi(request: Request):
+    """Task service OpenAPI spec"""
+    return await proxy_request("task_service", "openapi.json", request)
+
+@app.get("/tasks/docs")
+async def task_docs(request: Request):
+    """Task service documentation page"""
+    return await proxy_request("task_service", "docs", request)
+
+@app.api_route("/tasks/docs/{path:path}", methods=["GET"])
+async def task_docs_assets(path: str, request: Request):
+    """Task service docs assets (CSS, JS, etc.)"""
+    return await proxy_request("task_service", f"docs/{path}", request)
+
+@app.api_route("/tasks/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def task_proxy(path: str, request: Request):
+    """Proxy requests to task service"""
+    return await proxy_request("task_service", path, request)
 
 if __name__ == "__main__":
     import uvicorn
