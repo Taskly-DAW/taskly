@@ -127,8 +127,64 @@ services:
     networks:
       - taskly_network
 
+  notification_service:
+    build: ./notification_service
+    container_name: taskly_notification_service
+    environment:
+      DATABASE_URL: postgresql+asyncpg://notification_user:notification_pass@postgres:5432/taskly_notifications
+      KAFKA_BOOTSTRAP_SERVERS: redpanda:9092
+      SMTP_HOST: ${SMTP_HOST:-mailhog}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_USE_TLS: ${SMTP_USE_TLS:-false}
+      SENDER_EMAIL: ${SENDER_EMAIL:-noreply@taskly.com}
+      SENDER_NAME: ${SENDER_NAME:-Taskly Notifications}
+    depends_on:
+      - postgres
+      - redpanda
+    networks:
+      - taskly_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: taskly_postgres
+    environment:
+      POSTGRES_DB: taskly_notifications
+      POSTGRES_USER: notification_user
+      POSTGRES_PASSWORD: notification_pass
+      POSTGRES_INITDB_ARGS: "--auth-host=md5"
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - notification_postgres_data:/var/lib/postgresql/data/pgdata
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notification_user -d taskly_notifications"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - taskly_network
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: taskly_mailhog
+    ports:
+      - "8025:8025"  # Web UI
+      - "1025:1025"  # SMTP
+    networks:
+      - taskly_network
+
 volumes:
   postgres_data:
+  notification_postgres_data:
 
 networks:
   # Shared network for general service communication

@@ -36,6 +36,7 @@ help:
 	@echo "  db-users       - Show users table"
 	@echo "  db-roles       - Show roles table"
 	@echo "  db-query       - Run custom SQL query"
+	@echo "  db-notifications - Show notifications table"
 	@echo ""
 
 # Container Management
@@ -134,6 +135,11 @@ db-roles:
 db-query:
 	@echo "💻 Run custom query (usage: make db-query SQL='SELECT * FROM users;')"
 	docker-compose exec auth_db psql -U taskly_user -d auth_service -c "$(SQL)"
+
+db-notifications:
+	@echo "👥 Notifications table content..."
+	docker-compose exec postgres psql -U notification_user -d taskly_notifications -c "SELECT id, tenant_id, recipient_email, recipient_name, status, priority  FROM notifications;"
+
 
 dev: build
 	@echo "🛠️ Starting development environment..."

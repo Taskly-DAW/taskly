@@ -60,6 +60,7 @@ def create_consumer_producer(bootstrap_servers):
         producer = KafkaProducer(
             bootstrap_servers=bootstrap_servers,
             value_serializer=lambda v: json.dumps(v).encode("utf-8"),
+            key_serializer=lambda k: k.encode("utf-8") if k else None,
             retries=3,
             acks="all",
         )

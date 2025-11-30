@@ -18,14 +18,21 @@ def handle_user_registered(event, producer):
         
         # Send welcome workflow event
         welcome_event = {
-            "type": "user.welcome",
             "user_id": user_id,
             "tenant_id": tenant_id,
+            "user_email": event.get("username", f"user{user_id}@example.com"),
+            "user_name": event.get("username", f"User {user_id}"),
+            "registration_date": event.get("created_at", time.strftime('%Y-%m-%d %H:%M:%S')),
+            "platform_name": "Taskly",
+            "support_email": "support@taskly.com",
             "timestamp": time.time()
         }
         
-        producer.send("user.welcome", welcome_event)
+        future = producer.send("user.events", value=welcome_event, key="user.welcome")
+        producer.flush()  # Wait for the message to be sent
         logger.info(f"🎉 Welcome workflow initiated for user: {user_id}")
         
     except Exception as e:
         logger.error(f"❌ Error handling user.registered: {e}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
