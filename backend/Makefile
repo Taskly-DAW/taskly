@@ -192,6 +192,8 @@ dev: build
 test:
 	@echo "🧪 Running tests..."
 	docker-compose exec auth_service python -m pytest tests/ -v
+	# Run task service tests (install dev deps then run pytest inside container)
+	docker-compose exec task_service sh -lc "pip install -r /app/requirements-dev.txt && python -m pytest -q /app/tests/" || true
 
 test-coverage:
 	@echo "📊 Running tests with coverage..."

@@ -156,7 +156,9 @@ services:
       - taskly_network
 
   task_service:
-    build: ./task_service
+    build:
+      context: ./task_service
+      dockerfile: dockerFile
     container_name: taskly_task_service
     environment:
       DB_HOST: task_db
@@ -166,6 +168,10 @@ services:
       DB_PASSWORD: taskly_password
     ports:
       - "8002:8000" # Expose task service on port 8002
+    volumes:
+      - ./task_service/app:/app/app
+      - ./task_service/tests:/app/tests
+      - ./task_service/requirements-dev.txt:/app/requirements-dev.txt
     restart: unless-stopped
     depends_on:
       task_db:

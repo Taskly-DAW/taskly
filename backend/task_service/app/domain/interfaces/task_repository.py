@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from ..domain.models import Task
+from ..models import Task
 
 class TaskRepository(ABC):
     @abstractmethod
