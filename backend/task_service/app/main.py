@@ -1,92 +1,124 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from . import models, schemas
-from .database import SessionLocal, engine, get_db
+from ..database import get_db, Base, engine
+from ..infra.sqlalchemy_models import ProjectSQLA, TaskSQLA # Import SQLA models for metadata
+from ..infra.sqlalchemy_repositories import SQLAlchemyProjectRepository, SQLAlchemyTaskRepository
+from ..usecases.project_usecase import ProjectUseCase
+from ..usecases.task_usecase import TaskUseCase
+from ..usecases.dtos import ProjectCreateDTO, ProjectUpdateDTO, TaskCreateDTO, TaskUpdateDTO
+from ..schemas import ProjectResponseDTO, ProjectWithTasksResponseDTO, TaskResponseDTO, TaskWithProjectResponseDTO
 
-models.Base.metadata.create_all(bind=engine)
+# Ensure tables are created (for development/initial setup)
+Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(title="Task Service API", version="1.0.0")
 
-# Project Endpoints
-@app.post("/projects/", response_model=schemas.Project)
-def create_project(project: schemas.ProjectCreate, db: Session = Depends(get_db)):
-    db_project = models.Project(name=project.name, description=project.description)
-    db.add(db_project)
-    db.commit()
-    db.refresh(db_project)
-    return db_project
+# Dependency Injector for ProjectUseCase
+def get_project_use_case(db: Session = Depends(get_db)) -> ProjectUseCase:
+    repository = SQLAlchemyProjectRepository(db)
+    return ProjectUseCase(repository)
 
-@app.get("/projects/", response_model=List[schemas.Project])
-def read_projects(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    projects = db.query(models.Project).offset(skip).limit(limit).all()
-    return projects
+# Dependency Injector for TaskUseCase
+def get_task_use_case(db: Session = Depends(get_db)) -> TaskUseCase:
+    repository = SQLAlchemyTaskRepository(db)
+    return TaskUseCase(repository)
 
-@app.get("/projects/{project_id}", response_model=schemas.ProjectWithTasks)
-def read_project(project_id: int, db: Session = Depends(get_db)):
-    project = db.query(models.Project).filter(models.Project.id == project_id).first()
-    if project is None:
+# --- Project Endpoints ---
+
+@app.post("/projects/", response_model=ProjectResponseDTO, status_code=status.HTTP_201_CREATED)
+def create_project_endpoint(
+    project_data: ProjectCreateDTO,
+    project_use_case: ProjectUseCase = Depends(get_project_use_case)
+):
+    project = project_use_case.create_project(project_data)
+    return ProjectResponseDTO.model_validate(project.to_dict())
+
+@app.get("/projects/", response_model=List[ProjectResponseDTO])
+def read_projects_endpoint(
+    skip: int = 0,
+    limit: int = 100,
+    project_use_case: ProjectUseCase = Depends(get_project_use_case)
+):
+    projects = project_use_case.get_all_projects(skip=skip, limit=limit)
+    return [ProjectResponseDTO.model_validate(p.to_dict()) for p in projects]
+
+@app.get("/projects/{project_id}", response_model=ProjectResponseDTO)
+def read_project_endpoint(
+    project_id: int,
+    project_use_case: ProjectUseCase = Depends(get_project_use_case)
+):
+    project = project_use_case.get_project_by_id(project_id)
+    if not project:
         raise HTTPException(status_code=404, detail="Project not found")
-    return project
+    return ProjectResponseDTO.model_validate(project.to_dict())
 
-@app.put("/projects/{project_id}", response_model=schemas.Project)
-def update_project(project_id: int, project: schemas.ProjectCreate, db: Session = Depends(get_db)):
-    db_project = db.query(models.Project).filter(models.Project.id == project_id).first()
-    if db_project is None:
+@app.put("/projects/{project_id}", response_model=ProjectResponseDTO)
+def update_project_endpoint(
+    project_id: int,
+    project_data: ProjectUpdateDTO,
+    project_use_case: ProjectUseCase = Depends(get_project_use_case)
+):
+    updated_project = project_use_case.update_project(project_id, project_data)
+    if not updated_project:
         raise HTTPException(status_code=404, detail="Project not found")
-    db_project.name = project.name
-    db_project.description = project.description
-    db.commit()
-    db.refresh(db_project)
-    return db_project
+    return ProjectResponseDTO.model_validate(updated_project.to_dict())
 
-@app.delete("/projects/{project_id}")
-def delete_project(project_id: int, db: Session = Depends(get_db)):
-    db_project = db.query(models.Project).filter(models.Project.id == project_id).first()
-    if db_project is None:
+@app.delete("/projects/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_project_endpoint(
+    project_id: int,
+    project_use_case: ProjectUseCase = Depends(get_project_use_case)
+):
+    if not project_use_case.delete_project(project_id):
         raise HTTPException(status_code=404, detail="Project not found")
-    db.delete(db_project)
-    db.commit()
     return {"message": "Project deleted successfully"}
 
-# Task Endpoints
-@app.post("/tasks/", response_model=schemas.Task)
-def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
-    db_task = models.Task(**task.dict())
-    db.add(db_task)
-    db.commit()
-    db.refresh(db_task)
-    return db_task
+# --- Task Endpoints ---
 
-@app.get("/tasks/", response_model=List[schemas.Task])
-def read_tasks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    tasks = db.query(models.Task).offset(skip).limit(limit).all()
-    return tasks
+@app.post("/tasks/", response_model=TaskResponseDTO, status_code=status.HTTP_201_CREATED)
+def create_task_endpoint(
+    task_data: TaskCreateDTO,
+    task_use_case: TaskUseCase = Depends(get_task_use_case)
+):
+    task = task_use_case.create_task(task_data)
+    return TaskResponseDTO.model_validate(task.to_dict())
 
-@app.get("/tasks/{task_id}", response_model=schemas.TaskWithProject)
-def read_task(task_id: int, db: Session = Depends(get_db)):
-    task = db.query(models.Task).filter(models.Task.id == task_id).first()
-    if task is None:
+@app.get("/tasks/", response_model=List[TaskResponseDTO])
+def read_tasks_endpoint(
+    skip: int = 0,
+    limit: int = 100,
+    task_use_case: TaskUseCase = Depends(get_task_use_case)
+):
+    tasks = task_use_case.get_all_tasks(skip=skip, limit=limit)
+    return [TaskResponseDTO.model_validate(t.to_dict()) for t in tasks]
+
+@app.get("/tasks/{task_id}", response_model=TaskResponseDTO)
+def read_task_endpoint(
+    task_id: int,
+    task_use_case: TaskUseCase = Depends(get_task_use_case)
+):
+    task = task_use_case.get_task_by_id(task_id)
+    if not task:
         raise HTTPException(status_code=404, detail="Task not found")
-    return task
+    return TaskResponseDTO.model_validate(task.to_dict())
 
-@app.put("/tasks/{task_id}", response_model=schemas.Task)
-def update_task(task_id: int, task: schemas.TaskCreate, db: Session = Depends(get_db)):
-    db_task = db.query(models.Task).filter(models.Task.id == task_id).first()
-    if db_task is None:
+@app.put("/tasks/{task_id}", response_model=TaskResponseDTO)
+def update_task_endpoint(
+    task_id: int,
+    task_data: TaskUpdateDTO,
+    task_use_case: TaskUseCase = Depends(get_task_use_case)
+):
+    updated_task = task_use_case.update_task(task_id, task_data)
+    if not updated_task:
         raise HTTPException(status_code=404, detail="Task not found")
-    for key, value in task.dict().items():
-        setattr(db_task, key, value)
-    db.commit()
-    db.refresh(db_task)
-    return db_task
+    return TaskResponseDTO.model_validate(updated_task.to_dict())
 
-@app.delete("/tasks/{task_id}")
-def delete_task(task_id: int, db: Session = Depends(get_db)):
-    db_task = db.query(models.Task).filter(models.Task.id == task_id).first()
-    if db_task is None:
+@app.delete("/tasks/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task_endpoint(
+    task_id: int,
+    task_use_case: TaskUseCase = Depends(get_task_use_case)
+):
+    if not task_use_case.delete_task(task_id):
         raise HTTPException(status_code=404, detail="Task not found")
-    db.delete(db_task)
-    db.commit()
     return {"message": "Task deleted successfully"}
