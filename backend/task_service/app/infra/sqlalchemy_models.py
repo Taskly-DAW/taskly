@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from ..database import Base # Assuming Base is defined in app/database.py
+from ..base import Base
 
 class ProjectSQLA(Base):
     __tablename__ = "projects"

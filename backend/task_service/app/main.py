@@ -2,13 +2,13 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from ..database import get_db, Base, engine
-from ..infra.sqlalchemy_models import ProjectSQLA, TaskSQLA # Import SQLA models for metadata
-from ..infra.sqlalchemy_repositories import SQLAlchemyProjectRepository, SQLAlchemyTaskRepository
-from ..usecases.project_usecase import ProjectUseCase
-from ..usecases.task_usecase import TaskUseCase
-from ..usecases.dtos import ProjectCreateDTO, ProjectUpdateDTO, TaskCreateDTO, TaskUpdateDTO
-from ..schemas import ProjectResponseDTO, ProjectWithTasksResponseDTO, TaskResponseDTO, TaskWithProjectResponseDTO
+from .database import get_db, Base, engine
+from .infra.sqlalchemy_models import ProjectSQLA, TaskSQLA  # Import SQLA models for metadata
+from .infra.sqlalchemy_repositories import SQLAlchemyProjectRepository, SQLAlchemyTaskRepository
+from .usecases.project_usecase import ProjectUseCase
+from .usecases.task_usecase import TaskUseCase
+from .usecases.dtos import ProjectCreateDTO, ProjectUpdateDTO, TaskCreateDTO, TaskUpdateDTO
+from .schemas import ProjectResponseDTO, ProjectWithTasksResponseDTO, TaskResponseDTO, TaskWithProjectResponseDTO
 
 # Ensure tables are created (for development/initial setup)
 Base.metadata.create_all(bind=engine)

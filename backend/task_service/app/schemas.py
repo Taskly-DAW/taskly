@@ -3,7 +3,7 @@ from typing import Optional, List
 from datetime import datetime
 
 # Import domain models
-from ..domain.models import Project, Task
+from .domain.models import Project, Task
 
 # --- DTOs para Projetos ---
 

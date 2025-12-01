@@ -19,6 +19,26 @@ class Project:
 
     def __repr__(self):
         return f"<Project(id={self.id}, name='{self.name}')>"
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        # data may contain keys from SQLAlchemy model __dict__
+        return cls(
+            id=data.get("id"),
+            name=data.get("name"),
+            description=data.get("description"),
+            created_at=data.get("created_at"),
+            updated_at=data.get("updated_at"),
+        )
 
 class Task:
     def __init__(
@@ -46,3 +66,30 @@ class Task:
 
     def __repr__(self):
         return f"<Task(id={self.id}, title='{self.title}', project_id={self.project_id})>"
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "status": self.status,
+            "priority": self.priority,
+            "completed": self.completed,
+            "project_id": self.project_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            id=data.get("id"),
+            title=data.get("title"),
+            project_id=data.get("project_id"),
+            description=data.get("description"),
+            status=data.get("status", "pending"),
+            priority=data.get("priority", 0),
+            completed=data.get("completed", False),
+            created_at=data.get("created_at"),
+            updated_at=data.get("updated_at"),
+        )

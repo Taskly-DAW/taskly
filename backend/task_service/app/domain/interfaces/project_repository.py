@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from ..domain.models import Project
+from ..models import Project
 
 class ProjectRepository(ABC):
     @abstractmethod
