@@ -2,9 +2,9 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from .database import Base
+from ..database import Base # Assuming Base is defined in app/database.py
 
-class Project(Base):
+class ProjectSQLA(Base):
     __tablename__ = "projects"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -13,9 +13,9 @@ class Project(Base):
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())
 
-    tasks = relationship("Task", back_populates="project")
+    tasks = relationship("TaskSQLA", back_populates="project")
 
-class Task(Base):
+class TaskSQLA(Base):
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -28,4 +28,4 @@ class Task(Base):
     updated_at = Column(DateTime, onupdate=func.now())
 
     project_id = Column(Integer, ForeignKey("projects.id"))
-    project = relationship("Project", back_populates="tasks")
+    project = relationship("ProjectSQLA", back_populates="tasks")
