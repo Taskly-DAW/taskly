@@ -1,0 +1,13 @@
+# Kafka client for Python
+kafka-python>=2.0.2
+
+# JSON handling (built-in, but explicit for clarity)
+# json - built-in module
+
+# Logging and utilities
+requests>=2.31.0
+
+# Development and debugging
+ipython>=8.12.0
+python-snappy==0.6.1
+lz4==4.3.2

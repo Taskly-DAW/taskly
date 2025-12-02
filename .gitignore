@@ -1,0 +1,182 @@
+# ====================================
+# Taskly Project - Root .gitignore
+# ====================================
+
+# ============ Backend (Python/FastAPI) ============
+backend/__pycache__/
+backend/*.py[cod]
+backend/postgres_data/
+backend/.env
+backend/.env.local
+backend/logs/
+backend/backups/
+backend/test_reports/
+backend/.pytest_cache/
+backend/htmlcov/
+backend/.coverage
+backend/.mypy_cache/
+
+# ============ Frontend (when added) ============
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.next/
+frontend/.nuxt/
+frontend/.cache/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# ============ Mobile (when added) ============
+mobile/node_modules/
+mobile/ios/Pods/
+mobile/android/app/build/
+mobile/.expo/
+mobile/dist/
+
+# ============ Documentation ============
+docs/_build/
+docs/build/
+*.pdf
+!docs/assets/*.pdf
+
+# ============ Infrastructure ============
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes
+k8s/secrets/
+k8s/local/
+
+# Docker
+.docker/data/
+docker-compose.override.yml
+
+# ============ CI/CD ============
+# GitHub Actions secrets
+.secrets
+.github/workflows/.env
+
+# ============ IDE / Editor ============
+# VS Code workspace
+.vscode/
+*.code-workspace
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# ============ System Files ============
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.fuse_hidden*
+
+# ============ Logs ============
+*.log
+logs/
+log/
+
+# ============ Environment & Secrets ============
+.env
+.env.*
+!.env.example
+!.env.template
+secrets/
+credentials/
+*.key
+*.pem
+*.crt
+*.cert
+
+# ============ Temporary Files ============
+tmp/
+temp/
+.tmp/
+cache/
+.cache/
+
+# ============ Testing ============
+coverage/
+test-results/
+playwright-report/
+test_reports/
+
+# ============ Monitoring ============
+monitoring/data/
+prometheus_data/
+grafana_data/
+
+# ============ Backup Files ============
+backups/
+*.backup
+*.bak
+*.orig
+
+# ============ Compressed Files ============
+*.zip
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+
+# ============ Local Development ============
+scratch/
+notes/
+todo.txt
+NOTES.md
+local_*
+dev_*
+
+# ============ Package Managers ============
+node_modules/
+__pycache__/
+.venv/
+venv/
+env/
+
+# ============ Build Artifacts ============
+dist/
+build/
+target/
+out/
+
+# ============ Database Files ============
+*.db
+*.sqlite
+*.sqlite3
+pg_data/
+mysql_data/
+
+# ============ Custom Project Ignores ============
+# Add project-specific files here
+research/
+experiments/
+prototypes/
+old/
+archive/
