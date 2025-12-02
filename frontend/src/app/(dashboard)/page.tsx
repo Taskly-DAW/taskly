@@ -53,9 +53,7 @@ export default function DashboardPage() {
 
       <div className="grid gap-6 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <div className="h-96 bg-gray-50 border rounded-lg p-4">
-            <StatusDistributionChart />
-          </div>
+          <StatusDistributionChart />
         </div>
 
         <div className="lg:col-span-5">

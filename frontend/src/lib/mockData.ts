@@ -7,7 +7,7 @@ interface Responsible {
 interface Task {
   id: string;
   title: string;
-  status: 'Concluídas' | 'Em Andamento' | 'Atrasadas' | 'A Fazer' | 'Em Progresso' | 'Concluído';
+  status: 'Concluídas' | 'Atrasadas' | 'A Fazer' | 'Em Andamento';
   priority: 'Alta' | 'Média' | 'Baixa';
   dueDate: string; // Formato YYYY-MM-DD
   responsible: Responsible;
@@ -44,7 +44,7 @@ export const MOCK_TASKS: Task[] = [
   { id: "T008", title: "Desenvolver feature de autenticação", status: "Em Andamento", priority: "Alta", dueDate: "2025-07-15", responsible: RESPONSIBLE_JS, projectId: "P1", projectName: "TaskFlow MVP" },
   { id: "T009", title: "Configurar ambiente de staging", status: "Em Andamento", priority: "Alta", dueDate: "2025-07-18", responsible: RESPONSIBLE_AS, projectId: "P1", projectName: "TaskFlow MVP" },
   { id: "T010", title: "Criar wireframes p/ relatórios", status: "Em Andamento", priority: "Média", dueDate: "2025-07-20", responsible: RESPONSIBLE_MO, projectId: "P3", projectName: "Documentação" },
-  { id: "T011", title: "Testar integração de pagamentos", status: "Em Progresso", priority: "Média", dueDate: "2025-07-22", responsible: RESPONSIBLE_CL, projectId: "P2", projectName: "Onboarding" },
+  { id: "T011", title: "Testar integração de pagamentos", status: "Em Andamento", priority: "Média", dueDate: "2025-07-22", responsible: RESPONSIBLE_CL, projectId: "P2", projectName: "Onboarding" },
   // TAREFAS ATRASADAS
   { id: "T012", title: "Revisão de segurança do código", status: "Atrasadas", priority: "Alta", dueDate: "2025-04-01", responsible: RESPONSIBLE_JS, projectId: "P1", projectName: "TaskFlow MVP" },
   { id: "T013", title: "Atualizar políticas de privacidade", status: "Atrasadas", priority: "Média", dueDate: "2025-05-01", responsible: RESPONSIBLE_MO, projectId: "P3", projectName: "Documentação" },
