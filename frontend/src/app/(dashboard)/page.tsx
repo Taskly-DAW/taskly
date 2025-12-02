@@ -2,6 +2,7 @@ import { CheckCircle, Clock, XCircle, Plus, FolderPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MetricCard } from '@/components/organisms/MetricCard/MetricCard';
 import { MonthlyProgressChart } from '@/components/organisms/MonthlyProgressChart';
+import { StatusDistributionChart } from '@/components/organisms/StatusDistributionChart';
 const MOCK_METRICS = [
   {
     title: 'Tarefas Concluídas',
@@ -53,7 +54,7 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <div className="h-96 bg-gray-50 border rounded-lg p-4">
-            Distribuição de Status de Tarefas (Gráfico)
+            <StatusDistributionChart />
           </div>
         </div>
 

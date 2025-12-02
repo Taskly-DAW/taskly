@@ -1,19 +1,67 @@
-// src/store/dashboardStore.ts (Adicionando a função de agregação)
-
 import { getMonthLabel } from "@/lib/utils/dateUtils";
-import { MonthlyProgressData } from "@/schemas/chartSchema";
-import { create } from "zustand";
+import { MonthlyProgressData, StatusDistributionData } from "@/schemas/chartSchema"; // Adicionado StatusDistributionData
+import { create, StateCreator } from "zustand";
+import { Task } from "@/schemas/taskSchema"; // Importar o tipo Task
+import { MOCK_TASKS } from '@/lib/mockData'; // <-- Importar o mock
+interface DashboardFilters {
+  project: string;
+  status: string;
+  responsible: string;
+  period: string;
+}
 
-
-const aggregateMonthlyProgress = (tasks: [], filters: []): MonthlyProgressData[] => { 
-  const monthlyData: { [key: string]: { [project: string]: number } } = {};
+interface DashboardState {
+  tasks: Task[]; // Lista completa de tarefas
+  filters: DashboardFilters;
+  setFilter: (key: keyof DashboardFilters, value: string) => void;
   
-  tasks.forEach(task => {
-    const month = getMonthLabel(task.dueDate); 
-    const project = task.projectName; 
+  getMonthlyProgress: () => MonthlyProgressData[];
+  getStatusDistribution: () => StatusDistributionData[];
+}
+
+
+
+const STATUS_COLORS = {
+  'Concluídas': '#1D4ED8',
+  'Em Andamento': '#4CAF50',
+  'Atrasadas': '#EF4444',
+  'A Fazer': '#FFDE21',
+};
+
+export const aggregateStatusDistribution = (tasks: Task[]): StatusDistributionData[] => {
+  const statusCounts = tasks.reduce((acc, task) => {
+    const status = task.status as keyof typeof STATUS_COLORS;
+    acc[status] = (acc[status] || 0) + 1;
+    return acc;
+  }, {} as Record<keyof typeof STATUS_COLORS, number>);
+
+  return Object.keys(statusCounts).map((status) => ({
+    name: status as keyof typeof STATUS_COLORS,
+    value: statusCounts[status as keyof typeof STATUS_COLORS],
+    color: STATUS_COLORS[status as keyof typeof STATUS_COLORS],
+  })).filter(item => item.value > 0);
+};
+
+export const aggregateMonthlyProgress = (tasks: Task[], filters: DashboardFilters): MonthlyProgressData[] => {
+  // Nota: tasks e filters agora estão tipados.
+  const monthlyData: { [key: string]: { [project: string]: number } } = {};
+  const MOCK_PROJECTS = ['TaskFlow MVP', 'Onboarding', 'Documentação']; // Hardcoded projects
+
+  // 1. Aplicar filtro básico (ex: filtro de período, se fosse implementado)
+  const filteredTasks = tasks.filter(task => {
+    // Exemplo de filtro:
+    // return filters.status === 'Todos' || task.status === filters.status;
+    return true; 
+  });
+  
+  // 2. Agregação
+  filteredTasks.forEach(task => {
+    const month = getMonthLabel(task.dueDate);
+    const project = task.projectName || 'Desconhecido'; // Assegure que projectName exista
     
     if (!monthlyData[month]) {
-      monthlyData[month] = { 'TaskFlow MVP': 0, 'Onboarding': 0, 'Documentação': 0 };
+      // Inicializa todos os projetos do mês para 0
+      monthlyData[month] = MOCK_PROJECTS.reduce((acc, p) => ({ ...acc, [p]: 0 }), {});
     }
     
     if (monthlyData[month][project] !== undefined) {
@@ -21,6 +69,7 @@ const aggregateMonthlyProgress = (tasks: [], filters: []): MonthlyProgressData[]
     }
   });
 
+  // 3. Conversão para Array
   return Object.keys(monthlyData).map(month => ({
     name: month,
     ...monthlyData[month],
@@ -28,8 +77,25 @@ const aggregateMonthlyProgress = (tasks: [], filters: []): MonthlyProgressData[]
 };
 
 export const useDashboardStore = create<DashboardState>((set, get) => ({
+  tasks: MOCK_TASKS,
+  filters: {
+    project: 'Todos os Projetos',
+    status: 'Todos os Status',
+    responsible: 'Todos os Responsáveis',
+    period: 'Últimos 7 Dias',
+  },
+
+  setFilter: (key, value) => set((state) => ({
+    filters: { ...state.filters, [key]: value },
+  })),
+
   getMonthlyProgress: () => {
     const { tasks, filters } = get();
     return aggregateMonthlyProgress(tasks, filters);
+  },
+  
+  getStatusDistribution: () => {
+    const { tasks } = get();
+    return aggregateStatusDistribution(tasks);
   }
 }));

@@ -7,4 +7,12 @@ export const MonthlyProgressSchema = z.object({
   'Documentação': z.number(),
 });
 
+export const StatusDistributionDataSchema = z.object({
+  name: z.enum(['Concluídas', 'Em Andamento', 'Atrasadas']), // O rótulo
+  value: z.number(), // A contagem de tarefas
+  color: z.string(), // A cor no gráfico
+});
+
 export type MonthlyProgressData = z.infer<typeof MonthlyProgressSchema>;
+
+export type StatusDistributionData = z.infer<typeof StatusDistributionDataSchema>;
