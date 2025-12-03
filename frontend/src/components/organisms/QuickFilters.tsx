@@ -27,7 +27,7 @@ export const QuickFilters = () => {
         const oldValues = filters[key] || [];
 
         if (newValues.length === 0) {
-            setFilter(key, [allLabel] as any); // 'as any' para contornar a sobrecarga de tipo do Zustand
+            setFilter(key, [allLabel] as any);
         } else if (newValues.includes(allLabel) && !oldValues.includes(allLabel)) {
             setFilter(key, [allLabel] as any);
         } else if (newValues.length > 1 && oldValues.includes(allLabel)) {

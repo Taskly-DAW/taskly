@@ -16,7 +16,7 @@ interface Option {
 interface MultiSelectFilterProps {
   options: Option[];
   placeholder: string;
-  selectedValues: string[]; // Array de strings (os labels/nomes selecionados)
+  selectedValues: string[];
   onValueChange: (newValues: string[]) => void;
 }
 

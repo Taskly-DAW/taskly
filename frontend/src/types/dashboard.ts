@@ -9,8 +9,9 @@ export interface DashboardFilters {
 }
 
 export interface DashboardState {
-  tasks: Task[]; // Lista completa de tarefas
+  tasks: Task[];
   filters: DashboardFilters;
+  moveTask: (taskId: string, newStatus: string) => void;
   setFilter: (key: keyof DashboardFilters, value: string) => void;
   
   getMonthlyProgress: () => MonthlyProgressData[];
