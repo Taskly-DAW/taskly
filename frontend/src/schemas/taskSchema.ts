@@ -8,8 +8,6 @@ export const ResponsibleSchema = z.object({
 
 export const TaskStatusSchema = z.enum([
   'A Fazer', 
-  'Em Progresso', 
-  'Concluído', 
   'Concluídas', 
   'Em Andamento', 
   'Atrasadas'

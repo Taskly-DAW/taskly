@@ -8,7 +8,7 @@ export const MonthlyProgressSchema = z.object({
 });
 
 export const StatusDistributionDataSchema = z.object({
-  name: z.enum(['Concluídas', 'Em Andamento', 'Atrasadas']), // O rótulo
+  name: z.enum(['Concluídas', 'Em Andamento', 'Atrasadas', 'A Fazer']), // O rótulo
   value: z.number(), // A contagem de tarefas
   color: z.string(), // A cor no gráfico
 });

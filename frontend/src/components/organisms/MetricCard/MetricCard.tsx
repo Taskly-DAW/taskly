@@ -9,6 +9,7 @@ interface MetricCardProps {
   percentage: number;
   icon: LucideIcon;
   iconColorClass: string;
+  isInverter?: boolean;
 }
 
 export const MetricCard = ({
@@ -17,6 +18,7 @@ export const MetricCard = ({
   percentage,
   icon: Icon,
   iconColorClass,
+  isInverter = false,
 }: MetricCardProps) => {
   return (
     <Card className="shadow-lg hover:shadow-xl transition-shadow border-t-4 border-t-transparent hover:border-t-blue-500">
@@ -28,7 +30,7 @@ export const MetricCard = ({
       </CardHeader>
 
       <CardContent>
-        <MetricValue value={value} percentage={percentage} />
+        <MetricValue value={value} percentage={percentage} isInverter={isInverter}/>
       </CardContent>
     </Card>
   );
