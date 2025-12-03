@@ -55,7 +55,8 @@ export const TaskCard = ({
     .toUpperCase();
 
   return (
-    <Card className="w-full bg-white shadow-sm hover:shadow-md transition-all border border-gray-200 rounded-xl group">
+    <Card className="gap-2 p-0 w-full bg-white shadow-sm hover:shadow-md transition-all border border-gray-200 rounded-xl">
+
       <CardHeader className="p-4 pb-2 flex flex-row items-start justify-between space-y-0">
         <h3 className="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mr-2">
           {title}

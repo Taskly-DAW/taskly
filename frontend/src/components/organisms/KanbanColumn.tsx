@@ -33,7 +33,7 @@ export const KanbanColumn = ({ id, title, tasks }: KanbanColumnProps) => {
               'flex flex-col gap-3 overflow-y-auto min-h-[150px] transition-colors',
               snapshot.isDraggingOver ? 'bg-gray-100/50 rounded-md' : '',
             )}
-            style={{ maxHeight: 'calc(100vh - 250px)' }}
+            
           >
             {tasks.map((task, index) => (
               <Draggable key={task.id} draggableId={task.id} index={index}>
@@ -46,6 +46,7 @@ export const KanbanColumn = ({ id, title, tasks }: KanbanColumnProps) => {
                       ...provided.draggableProps.style,
                       opacity: snapshot.isDragging ? 0.8 : 1,
                     }}
+                    className='gap-1'
                   >
                     <TaskCard
                       id={task.id}
@@ -68,7 +69,7 @@ export const KanbanColumn = ({ id, title, tasks }: KanbanColumnProps) => {
       {/* Botão Adicionar */}
       <Button
         variant="ghost"
-        className="mt-4 justify-start text-blue-600 hover:text-blue-700"
+        className="mt-4 justify-center text-blue-600 hover:text-blue-700"
       >
         <Plus className="h-4 w-4 mr-2" /> Adicionar Tarefa
       </Button>

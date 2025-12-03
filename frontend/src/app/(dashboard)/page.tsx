@@ -1,6 +1,6 @@
 import { CheckCircle, Clock, XCircle, Plus, FolderPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { MetricCard } from '@/components/organisms/MetricCard/MetricCard';
+import { MetricCard } from '@/components/organisms/MetricCard';
 import { MonthlyProgressChart } from '@/components/organisms/MonthlyProgressChart';
 import { StatusDistributionChart } from '@/components/organisms/StatusDistributionChart';
 import { QuickFilters } from '@/components/organisms/QuickFilters';
