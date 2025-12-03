@@ -17,28 +17,39 @@ import {
 } from 'recharts';
 import { useShallow } from 'zustand/shallow';
 import React from 'react';
+import { projectOptions } from '@/data/filterOptions';
+
+const generateColorFromString = (str: string): string => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return `hsl(${hash % 360}, 70%, 50%)`;
+};
 
 export const MonthlyProgressChart = () => {
-  // 1. Selecionar APENAS as dependências do gráfico (tasks e filters) do Zustand.
-  // Usamos useShallow para garantir que só renderize se tasks ou filters mudarem.
   const { tasks, filters } = useDashboardStore(
     useShallow((state) => ({
       tasks: state.tasks,
-      filters: state.filters, // O gráfico mensal depende dos filtros!
+      filters: state.filters,
     })),
   );
 
-  // 2. Memoizar o resultado da agregação.
-  // 'data' só será recalculado (e terá uma nova referência) quando tasks ou filters mudarem.
   const data = React.useMemo(() => {
     return aggregateMonthlyProgress(tasks, filters);
-  }, [tasks, filters]); // Dependências do useMemo
+  }, [tasks, filters]);
 
-  const projectColors = {
-    'TaskFlow MVP': '#000000', // Preto
-    Onboarding: '#10B981', // Verde
-    Documentação: '#EF4444', // Vermelho
-  };
+  const projectsToDisplay = React.useMemo(() => {
+    const allProjectNames = projectOptions
+      .map(p => p.value)
+      .filter(p => p !== 'Todos os Projetos');
+
+    if (filters.project.includes('Todos os Projetos')) {
+      return allProjectNames;
+    }
+    return filters.project.filter(p => p !== 'Todos os Projetos');
+  }, [filters.project]);
+
 
   return (
     <Card className="shadow-lg h-full">
@@ -91,9 +102,12 @@ export const MonthlyProgressChart = () => {
               wrapperStyle={{ paddingTop: '10px' }}
             />
 
-            <Bar dataKey="TaskFlow MVP" fill={projectColors['TaskFlow MVP']} />
-            <Bar dataKey="Onboarding" fill={projectColors['Onboarding']} />
-            <Bar dataKey="Documentação" fill={projectColors['Documentação']} />
+            {projectsToDisplay.map((projectName) => (
+              <Bar 
+                key={projectName} 
+                dataKey={projectName} 
+                fill={generateColorFromString(projectName)} />
+            ))}
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

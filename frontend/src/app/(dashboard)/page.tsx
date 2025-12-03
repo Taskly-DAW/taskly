@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { MetricCard } from '@/components/organisms/MetricCard/MetricCard';
 import { MonthlyProgressChart } from '@/components/organisms/MonthlyProgressChart';
 import { StatusDistributionChart } from '@/components/organisms/StatusDistributionChart';
+import { QuickFilters } from '@/components/organisms/QuickFilters';
 const MOCK_METRICS = [
   {
     title: 'Tarefas Concluídas',
@@ -10,6 +11,7 @@ const MOCK_METRICS = [
     percentage: 20.1,
     icon: CheckCircle,
     iconColorClass: 'text-blue-600',
+    isInverter: false,
   },
   {
     title: 'Tarefas em Andamento',
@@ -17,6 +19,7 @@ const MOCK_METRICS = [
     percentage: -5.3,
     icon: Clock,
     iconColorClass: 'text-orange-500',
+    isInverter: true,
   },
   {
     title: 'Tarefas Atrasadas',
@@ -24,6 +27,7 @@ const MOCK_METRICS = [
     percentage: 15.0,
     icon: XCircle,
     iconColorClass: 'text-red-600',
+    isInverter: true,
   },
 ];
 
@@ -34,7 +38,7 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-bold text-gray-800">
           Bem-vindo(a) ao Taskly!
         </h1>
-
+        {/* 
         <div className="flex gap-3">
           <Button>
             <Plus className="mr-2 h-4 w-4" /> Criar Nova Tarefa
@@ -42,7 +46,7 @@ export default function DashboardPage() {
           <Button variant="outline">
             <FolderPlus className="mr-2 h-4 w-4" /> Criar Novo Projeto
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <div className="grid gap-6 md:grid-cols-3 mb-8">
@@ -61,9 +65,10 @@ export default function DashboardPage() {
         </div>
 
         <div className="lg:col-span-3">
-          <div className="h-96 bg-gray-50 border rounded-lg p-4">
+          {/* <div className="h-96 bg-gray-50 border rounded-lg p-4">
             Filtros Rápidos (Selects)
-          </div>
+          </div> */}
+          <QuickFilters />
         </div>
       </div>
     </div>
