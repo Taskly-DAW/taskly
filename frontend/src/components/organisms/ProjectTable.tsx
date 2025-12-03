@@ -40,17 +40,17 @@ export const ProjectTable = ({ projects }: ProjectTableProps) => {
       <Table>
         <TableHeader className="bg-gray-50">
           <TableRow>
-            <TableHead className="w-[300px]">Nome do Projeto</TableHead>
-            <TableHead className="w-[200px]">Responsável</TableHead>
-            <TableHead className="w-[200px]">Progresso</TableHead>
-            <TableHead className="w-[120px]">Data Final</TableHead>
-            <TableHead className="w-[80px] text-right">Ações</TableHead>
+            <TableHead className="text-gray-700 w-[300px] p-4">Nome do Projeto</TableHead>
+            <TableHead className="text-gray-700 w-[200px]">Responsável</TableHead>
+            <TableHead className="text-gray-700 w-[200px]">Progresso</TableHead>
+            <TableHead className="text-gray-700 w-[120px]">Data Final</TableHead>
+            <TableHead className="text-gray-700 w-[80px] text-right">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {projects.map((project) => (
             <TableRow key={project.id}>
-              <TableCell className="font-medium text-gray-900">
+              <TableCell className="font-medium text-gray-900 p-4">
                 {project.name}
               </TableCell>
 
