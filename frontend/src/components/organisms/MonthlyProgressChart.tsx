@@ -44,11 +44,11 @@ export const MonthlyProgressChart = () => {
       .map(p => p.value)
       .filter(p => p !== 'Todos os Projetos');
 
-    if (filters.project.includes('Todos os Projetos')) {
+    if (filters.projects.includes('Todos os Projetos')) {
       return allProjectNames;
     }
-    return filters.project.filter(p => p !== 'Todos os Projetos');
-  }, [filters.project]);
+    return filters.projects.filter(p => p !== 'Todos os Projetos');
+  }, [filters.projects]);
 
 
   return (

@@ -44,12 +44,6 @@ export const MultiSelectFilter = ({
     const newSelection = selectedValues.filter((v) => v !== valueToRemove);
     onValueChange(newSelection);
   };
-  
-  const displayLabel = selectedValues.length > 0 
-    ? selectedValues.map(v => v).join(', ') 
-    : placeholder;
-    
-  const allValue = options[0]?.label; 
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -60,12 +54,12 @@ export const MultiSelectFilter = ({
           aria-expanded={open}
           className="w-full justify-between h-10 px-3 overflow-hidden"
         >
-          {selectedValues.length === 0 ? (
+          {selectedValues?.length === 0 ? (
             <span className="text-gray-500">{placeholder}</span>
           ) : (
             <div className="flex flex-wrap gap-1 items-center max-w-[90%]">
-              {selectedValues.length < 3 ? (
-                selectedValues.map((value) => (
+              {selectedValues?.length < 3 ? (
+                selectedValues?.map((value) => (
                   <Badge 
                     key={value} 
                     variant="secondary" 
@@ -81,7 +75,7 @@ export const MultiSelectFilter = ({
                 ))
               ) : (
                 <span className="text-sm truncate">
-                    {selectedValues.slice(0, 1).join(', ')}... (+{selectedValues.length - 1} )
+                    {selectedValues?.slice(0, 1).join(', ')}... (+{selectedValues?.length - 1} )
                 </span>
               )}
             </div>
@@ -97,7 +91,7 @@ export const MultiSelectFilter = ({
             <CommandEmpty>Nenhum resultado encontrado.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => {
-                const isChecked = selectedValues.includes(option.label);
+                const isChecked = selectedValues?.includes(option.label);
                 
                 return (
                   <CommandItem

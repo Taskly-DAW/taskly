@@ -1,6 +1,15 @@
 import { z } from 'zod';
 
-export const ProjectSchema = z.object({
+// 1. Schema do que vem EXATAMENTE da sua API (Backend)
+export const ProjectApiSchema = z.object({
+  id: z.number(), // A API retorna number
+  name: z.string(),
+  description: z.string().nullable().optional(),
+  created_at: z.string(), // Vem como string ISO
+  updated_at: z.string().nullable().optional(),
+});
+
+export const ProjectUiSchema = z.object({
   id: z.string(),
   name: z.string(),
   responsible: z.object({
@@ -12,4 +21,5 @@ export const ProjectSchema = z.object({
   status: z.enum(['Ativos', 'Concluídos', 'Arquivados']),
 });
 
-export type Project = z.infer<typeof ProjectSchema>;
+export type ProjectApi = z.infer<typeof ProjectApiSchema>;
+export type Project = z.infer<typeof ProjectUiSchema>; // Esse é o tipo usado nos componentes
