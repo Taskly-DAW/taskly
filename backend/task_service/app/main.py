@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
 from .database import get_db, Base, engine
@@ -14,6 +15,19 @@ from .schemas import ProjectResponseDTO, ProjectWithTasksResponseDTO, TaskRespon
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Task Service API", version="1.0.0")
+
+# --- CORS Middleware ---
+# Permite que o frontend (em outro domínio/porta) acesse a API.
+# O "*" é permissivo demais para produção, mas ótimo para desenvolvimento.
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todas as origens
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos os métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permite todos os cabeçalhos
+)
+
 
 # Dependency Injector for ProjectUseCase
 def get_project_use_case(db: Session = Depends(get_db)) -> ProjectUseCase:
