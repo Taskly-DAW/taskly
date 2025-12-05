@@ -27,9 +27,10 @@ export default function DashboardPage() {
     const total = tasks.length;
 
     console.log(tasks);
-    
+
     const completed = tasks.filter((t) => t.status === 'Concluído').length;
     const inProgress = tasks.filter((t) => t.status === 'Em Progresso').length;
+    const todo = tasks.filter((t) => t.status === 'A Fazer').length;
 
     const now = new Date();
     const overdue = tasks.filter((t) => {
@@ -54,6 +55,15 @@ export default function DashboardPage() {
         iconColorClass: 'text-orange-500',
         isInverter: false,
       },
+      ,
+      {
+        title: 'A Fazer',
+        value: todo,
+        percentage: 0,
+        icon: Clock,
+        iconColorClass: 'text-red-600',
+        isInverter: true,
+      },
       {
         title: 'Tarefas Atrasadas',
         value: overdue,
@@ -75,18 +85,9 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-bold text-gray-800">
           Bem-vindo(a) ao Taskly!
         </h1>
-
-        <div className="flex gap-3">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" /> Criar Nova Tarefa
-          </Button>
-          <Button variant="outline">
-            <FolderPlus className="mr-2 h-4 w-4" /> Criar Novo Projeto
-          </Button>
-        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3 mb-8">
+      <div className="grid gap-6 md:grid-cols-4 mb-8">
         {metrics.map((metric) => (
           <MetricCard key={metric.title} {...metric} />
         ))}
