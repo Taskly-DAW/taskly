@@ -54,27 +54,30 @@ export const aggregateStatusDistribution = (
 
 export const aggregateMonthlyProgress = (
   tasks: Task[],
-  filters: DashboardFilters,
+  projects: Project[],
 ): MonthlyProgressData[] => {
   const monthlyData: { [key: string]: { [project: string]: number } } = {};
-  const MOCK_PROJECTS = ['TaskFlow MVP', 'Onboarding', 'Documentação'];
+  const projectNames = projects?.map((p) => p.name);
 
-  const filteredTasks = tasks.filter((task) => {
-    return true;
-  });
-
-  filteredTasks.forEach((task) => {
+  tasks?.forEach((task) => {
     const month = getMonthLabel(task.dueDate);
     const project = task.projectName || 'Desconhecido';
 
     if (!monthlyData[month]) {
-      monthlyData[month] = MOCK_PROJECTS.reduce(
+      // Inicializa o mês com todos os projetos com contagem 0
+      monthlyData[month] = projectNames.reduce(
         (acc, p) => ({ ...acc, [p]: 0 }),
         {},
       );
+      // Adiciona uma chave para tarefas sem projeto definido, se necessário
+      if (!monthlyData[month]['Desconhecido']) {
+        monthlyData[month]['Desconhecido'] = 0;
+      }
     }
 
-    if (monthlyData[month][project] !== undefined) {
+    if (projectNames.includes(project)) {
+      monthlyData[month][project] += 1;
+    } else if (project === 'Desconhecido') {
       monthlyData[month][project] += 1;
     }
   });
@@ -102,37 +105,6 @@ const mapPriority = (prio: number): 'Alta' | 'Média' | 'Baixa' => {
 };
 
 export const useDashboardStore = create<DashboardState>((set, get) => ({
-  tasks: [],
-  fetchTasks: async () => {
-    try {
-      const response = await fetch(
-        'http://localhost:8002/tasks/?skip=0&limit=100',
-      );
-      if (!response.ok) throw new Error('Erro ao buscar tarefas');
-
-      const rawData = await response.json();
-
-      const apiTasks = z.array(TaskApiSchema).parse(rawData);
-
-      const uiTasks: Task[] = apiTasks.map((t) => ({
-        id: t.id.toString(),
-        title: t.title,
-        status: mapStatus(t.status, t.completed),
-        priority: mapPriority(t.priority),
-        dueDate: new Date(t.created_at),
-        responsible: {
-          name: 'Usuário Padrão',
-          initials: 'UP',
-          avatarUrl: '',
-        },
-      }));
-
-      set({ tasks: uiTasks });
-    } catch (error) {
-      console.error('Erro ao carregar tasks:', error);
-    }
-  },
-
   projects: [],
   fetchProjects: async () => {
     set({ isLoading: true, error: null });
@@ -169,6 +141,49 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     }
   },
 
+  tasks: [],
+  fetchTasks: async () => {
+    try {
+      const { projects } = await get();
+
+      const response = await fetch(
+        'http://localhost:8002/tasks/?skip=0&limit=100',
+      );
+
+      if (!response.ok) throw new Error('Erro ao buscar tarefas');
+
+      const rawData = await response.json();
+
+      const apiTasks = z.array(TaskApiSchema).parse(rawData);
+
+      const uiTasks: Task[] = apiTasks.map((t) => {
+        const project = projects?.find((p) => p.id === t.project_id?.toString());
+
+        console.log(t.project_id?.toString());
+        console.log(projects);
+        console.log(project);
+
+        return {
+          id: t.id.toString(),
+          title: t.title,
+          status: mapStatus(t.status, t.completed),
+          priority: mapPriority(t.priority),
+          dueDate: new Date(t.created_at),
+          projectName: project?.name || 'Desconhecido',
+          responsible: {
+            name: 'Usuário Padrão',
+            initials: 'UP',
+            avatarUrl: '',
+          },
+        };
+      });
+
+      set({ tasks: uiTasks });
+    } catch (error) {
+      console.error('Erro ao carregar tasks:', error);
+    }
+  },
+
   isLoading: false,
   error: null,
 
@@ -180,21 +195,22 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     })),
 
   filters: {
-    projects: ['Todos os Projetos'],
+    project: ['Todos os Projetos'],
     status: ['Todos os Status'],
     responsible: ['Todos os Responsáveis'],
-    period: 'Últimos 7 Dias',
+    period: '7d',
   },
+
   getFilteredTasks: () => {
     const { tasks, filters } = get();
 
     return tasks.filter((task) => {
       const hasProjectFilter =
-        filters.projects.length > 0 &&
-        !filters.projects.includes('Todos os Projetos');
+        filters.projects?.length > 0 &&
+        !filters.projects?.includes('Todos os Projetos');
       if (
         hasProjectFilter &&
-        !filters.projects.includes(task.projectId || '')
+        !filters?.projects.includes(task.projectName || '')
       ) {
         return false;
       }
@@ -232,16 +248,40 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     }));
   },
 
-  getMonthlyProgress: () => {
-    const { tasks, filters } = get();
-    return aggregateMonthlyProgress(tasks, filters);
+  getProjectOptions: () => {
+    const { projects } = get();
+
+    const projectOptions = projects.map((p) => ({
+      label: p.name,
+      value: p.id,
+    }));
+    return [
+      { label: 'Todos os Projetos', value: 'Todos os Projetos' },
+      ...projectOptions,
+    ];
   },
 
-  getStatusDistribution: () => {
+  getStatusOptions: () => {
+    const statusNames = Object.keys(STATUS_COLORS).map((s) => ({
+      label: s,
+      value: s,
+    }));
+    return [
+      { label: 'Todos os Status', value: 'Todos os Status' },
+      ...statusNames,
+    ];
+  },
+
+  getResponsibleOptions: () => {
     const { tasks } = get();
-    return aggregateStatusDistribution(tasks);
+    const responsibleNames = [...new Set(tasks.map((t) => t.responsible.name))];
+    const responsibleOptions = responsibleNames.map((name) => ({
+      label: name,
+      value: name,
+    }));
+    return [
+      { label: 'Todos os Responsáveis', value: 'Todos os Responsáveis' },
+      ...responsibleOptions,
+    ];
   },
 }));
-
-const mockNames = ['Maria Oliveira', 'João Silva', 'Ana Souza', 'Carlos Lima'];
-const mockProjects = ['TaskFlow MVP', 'Onboarding', 'Documentação'];

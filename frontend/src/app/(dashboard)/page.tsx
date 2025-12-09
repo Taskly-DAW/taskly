@@ -11,30 +11,50 @@ import { useShallow } from 'zustand/shallow';
 import { useEffect, useMemo } from 'react';
 
 export default function DashboardPage() {
-  const { tasks, fetchTasks, isLoading } = useDashboardStore(
+  const {
+    fetchTasks,
+    getFilteredTasks,
+    fetchProjects,
+    isLoading,
+    projects,
+    tasks,
+    filters,
+  } = useDashboardStore(
     useShallow((state) => ({
-      tasks: state.tasks,
       fetchTasks: state.fetchTasks,
-      isLoading: state.isLoading,
+      fetchProjects: state.fetchProjects,
+      getFilteredTasks: state.getFilteredTasks,
+      filters: state.filters,
+      projects: state.projects,
+      tasks: state.tasks,
     })),
   );
 
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    const load = async () => {
+      await fetchProjects();
+      await fetchTasks();
+    };
+
+    load();
+  }, []);
+
+  const filteredTasks = getFilteredTasks();
 
   const metrics = useMemo(() => {
-    const total = tasks.length;
+    const total = filteredTasks.length;
 
-    console.log(tasks);
-
-    const completed = tasks.filter((t) => t.status === 'Concluído').length;
-    const inProgress = tasks.filter((t) => t.status === 'Em Progresso').length;
-    const todo = tasks.filter((t) => t.status === 'A Fazer').length;
+    const completed = filteredTasks.filter(
+      (t) => t.status === 'Concluído',
+    ).length;
+    const inProgress = filteredTasks.filter(
+      (t) => t.status === 'Em Progresso',
+    ).length;
+    const todo = filteredTasks.filter((t) => t.status === 'A Fazer').length;
 
     const now = new Date();
-    const overdue = tasks.filter((t) => {
-      const isDone = t.status === 'done';
+    const overdue = filteredTasks.filter((t) => {
+      const isDone = t.status === 'Concluído';
       return !isDone && new Date(t.dueDate) < now;
     }).length;
 
@@ -73,7 +93,7 @@ export default function DashboardPage() {
         isInverter: true,
       },
     ];
-  }, [tasks]);
+  }, [filteredTasks]);
 
   if (isLoading) {
     return <div className="p-6">Carregando dados...</div>;
@@ -99,7 +119,11 @@ export default function DashboardPage() {
         </div>
 
         <div className="lg:col-span-5">
-          <MonthlyProgressChart />
+          <MonthlyProgressChart
+            tasks={filteredTasks}
+            filters={filters}
+            projects={projects}
+          />
         </div>
 
         <div className="lg:col-span-3">

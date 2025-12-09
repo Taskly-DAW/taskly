@@ -23,6 +23,4 @@ export interface DashboardState {
   fetchProjects: () => Promise<void>;
   fetchTasks: () => Promise<void>;
   getFilteredTasks: () => Task[]; // Nova função exposta
-  getMonthlyProgress: () => MonthlyProgressData[];
-  getStatusDistribution: () => StatusDistributionData[];
 }
