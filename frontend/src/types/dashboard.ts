@@ -3,7 +3,7 @@ import {
   StatusDistributionData,
 } from '@/schemas/chartSchema';
 import { Task } from '@/schemas/taskSchema';
-import { Project, ProjectUiSchema } from '@/schemas/projectSchema';
+import { CreateProjectFormData, Project, ProjectUiSchema } from '@/schemas/projectSchema';
 
 export interface DashboardFilters {
   projects: string[];
@@ -23,4 +23,5 @@ export interface DashboardState {
   fetchProjects: () => Promise<void>;
   fetchTasks: () => Promise<void>;
   getFilteredTasks: () => Task[]; // Nova função exposta
+  createProject: (data: CreateProjectFormData) => Promise<void>;
 }

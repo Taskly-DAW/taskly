@@ -7,7 +7,7 @@ import { create, StateCreator } from 'zustand';
 import { Task, TaskApiSchema } from '@/schemas/taskSchema';
 import { MOCK_TASKS } from '@/lib/mockData';
 import { DashboardFilters, DashboardState } from '@/types/dashboard';
-import z from 'zod';
+import z, { set } from 'zod';
 import { ProjectApiSchema, Project, ProjectApi } from '@/schemas/projectSchema';
 
 const STATUS_COLORS = {
@@ -108,6 +108,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   projects: [],
   fetchProjects: async () => {
     set({ isLoading: true, error: null });
+    const { tasks } = get();
 
     try {
       const response = await fetch('/api/projects/');
@@ -123,7 +124,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
         name: apiProj.name,
         description: apiProj.description || '',
         dueDate: new Date(apiProj.created_at),
-        progress: Math.floor(Math.random() * 100),
+        progress: 0,
         status: 'Ativos',
         responsible: {
           name: 'Admin',
@@ -140,11 +141,36 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       });
     }
   },
+  createProject: async (newProjectData) => {
+    set({ isLoading: true });
+    try {
+      const response = await fetch('http://localhost:8002/projects/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...newProjectData,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Falha ao criar projeto');
+
+      await get().fetchProjects();
+    } catch (error) {
+      console.error(error);
+      set({ error: 'Erro ao criar projeto' });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 
   tasks: [],
   fetchTasks: async () => {
     try {
-      const { projects } = await get();
+      let { projects } = get();
+
+      if (projects.length === 0) {
+        await get().fetchProjects();
+      }
 
       const response = await fetch(
         'http://localhost:8002/tasks/?skip=0&limit=100',
@@ -156,8 +182,12 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
       const apiTasks = z.array(TaskApiSchema).parse(rawData);
 
+      const currentProjects = get().projects;
+
       const uiTasks: Task[] = apiTasks.map((t) => {
-        const project = projects?.find((p) => p.id === t.project_id?.toString());
+        const project = currentProjects?.find(
+          (p) => p.id === t.project_id?.toString(),
+        );
 
         return {
           id: t.id.toString(),
@@ -174,7 +204,25 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
         };
       });
 
-      set({ tasks: uiTasks });
+      const updatedProjects = currentProjects.map((project) => {
+        const projectTasks = uiTasks.filter(
+          (task) => task.projectName === project.name,
+        );
+
+        if (projectTasks.length === 0) {
+          return { ...project, progress: 0 };
+        }
+
+        const completedTasks = projectTasks.filter(
+          (task) => task.status === 'Concluído',
+        );
+        const progress = Math.round(
+          (completedTasks.length / projectTasks.length) * 100,
+        );
+        return { ...project, progress };
+      });
+       
+      set({ tasks: uiTasks, projects: updatedProjects });
     } catch (error) {
       console.error('Erro ao carregar tasks:', error);
     }
@@ -199,7 +247,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
   getFilteredTasks: () => {
     const { tasks, filters } = get();
-    
+
     return tasks.filter((task) => {
       const hasProjectFilter =
         filters.projects?.length > 0 &&

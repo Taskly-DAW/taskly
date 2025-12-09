@@ -21,5 +21,11 @@ export const ProjectUiSchema = z.object({
   status: z.enum(['Ativos', 'Concluídos', 'Arquivados']),
 });
 
+export const CreateProjectSchema = z.object({
+  name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres"),
+  description: z.string().optional()
+});
+
 export type ProjectApi = z.infer<typeof ProjectApiSchema>;
-export type Project = z.infer<typeof ProjectUiSchema>; // Esse é o tipo usado nos componentes
+export type Project = z.infer<typeof ProjectUiSchema>;
+export type CreateProjectFormData = z.infer<typeof CreateProjectSchema>;

@@ -18,7 +18,7 @@ export const TaskUiSchema = z.object({
   status: z.string(),
   priority: z.enum(['Alta', 'Média', 'Baixa']),
   dueDate: z.date(),
-  project_id: z.string().optional(),
+  project_id: z.number().optional(),
   projectName: z.string().optional(),
   responsible: z.object({
     name: z.string(),
