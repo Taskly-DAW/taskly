@@ -8,9 +8,12 @@ import { StatusDistributionChart } from '@/components/organisms/StatusDistributi
 import { QuickFilters } from '@/components/organisms/QuickFilters';
 import { useDashboardStore } from '@/store/dashboardStore';
 import { useShallow } from 'zustand/shallow';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Task } from '@/schemas/taskSchema';
 
 export default function DashboardPage() {
+  const [taskFiltered, setTaskFiltered]: any = useState([]);
+
   const {
     fetchTasks,
     getFilteredTasks,
@@ -34,26 +37,25 @@ export default function DashboardPage() {
     const load = async () => {
       await fetchProjects();
       await fetchTasks();
+      setTaskFiltered(getFilteredTasks());
     };
 
     load();
-  }, []);
-
-  const filteredTasks = getFilteredTasks();
+  }, [filters]);
 
   const metrics = useMemo(() => {
-    const total = filteredTasks.length;
+    const total = taskFiltered.length;
 
-    const completed = filteredTasks.filter(
+    const completed = taskFiltered.filter(
       (t) => t.status === 'Concluído',
     ).length;
-    const inProgress = filteredTasks.filter(
+    const inProgress = taskFiltered.filter(
       (t) => t.status === 'Em Progresso',
     ).length;
-    const todo = filteredTasks.filter((t) => t.status === 'A Fazer').length;
+    const todo = taskFiltered.filter((t) => t.status === 'A Fazer').length;
 
     const now = new Date();
-    const overdue = filteredTasks.filter((t) => {
+    const overdue = taskFiltered.filter((t) => {
       const isDone = t.status === 'Concluído';
       return !isDone && new Date(t.dueDate) < now;
     }).length;
@@ -93,7 +95,7 @@ export default function DashboardPage() {
         isInverter: true,
       },
     ];
-  }, [filteredTasks]);
+  }, [taskFiltered]);
 
   if (isLoading) {
     return <div className="p-6">Carregando dados...</div>;
@@ -120,7 +122,7 @@ export default function DashboardPage() {
 
         <div className="lg:col-span-5">
           <MonthlyProgressChart
-            tasks={filteredTasks}
+            tasks={taskFiltered}
             filters={filters}
             projects={projects}
           />

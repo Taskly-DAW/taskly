@@ -159,10 +159,6 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
       const uiTasks: Task[] = apiTasks.map((t) => {
         const project = projects?.find((p) => p.id === t.project_id?.toString());
 
-        console.log(t.project_id?.toString());
-        console.log(projects);
-        console.log(project);
-
         return {
           id: t.id.toString(),
           title: t.title,
@@ -195,7 +191,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     })),
 
   filters: {
-    project: ['Todos os Projetos'],
+    projects: ['Todos os Projetos'],
     status: ['Todos os Status'],
     responsible: ['Todos os Responsáveis'],
     period: '7d',
@@ -203,7 +199,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
   getFilteredTasks: () => {
     const { tasks, filters } = get();
-
+    
     return tasks.filter((task) => {
       const hasProjectFilter =
         filters.projects?.length > 0 &&

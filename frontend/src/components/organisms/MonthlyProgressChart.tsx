@@ -40,11 +40,6 @@ export const MonthlyProgressChart = ({ tasks, filters, projects }: DashboardStat
     return filters.projects.filter((p) => p !== 'Todos os Projetos');
   }, [filters?.projects, projects]);
 
-  console.log(tasks);
-  console.log(projects);
-  console.log(data);
-  
-
   return (
     <Card className="shadow-lg h-full">
       <CardHeader>

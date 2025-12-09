@@ -25,7 +25,7 @@ const periodOptions = [
   { value: 'all', label: 'Todo o Período' },
 ];
 
-type MultiFilterKey = 'project' | 'status' | 'responsible';
+type MultiFilterKey = 'projects' | 'status' | 'responsible';
 
 export const QuickFilters = () => {
   const {
@@ -52,7 +52,7 @@ export const QuickFilters = () => {
     newValues: string[],
   ) => {
     const allLabelMap = {
-      project: 'Todos os Projetos',
+      projects: 'Todos os Projetos',
       status: 'Todos os Status',
       responsible: 'Todos os Responsáveis',
     };
@@ -94,9 +94,9 @@ export const QuickFilters = () => {
           <MultiSelectFilter
             placeholder="Todos os Projetos"
             options={getProjectOptions()}
-            selectedValues={filters.project}
+            selectedValues={filters.projects}
             onValueChange={(values) =>
-              handleMultiFilterChange('project', values)
+              handleMultiFilterChange('projects', values)
             }
           />
         </div>
