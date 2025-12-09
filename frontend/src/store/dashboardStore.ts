@@ -104,6 +104,29 @@ const mapPriority = (prio: number): 'Alta' | 'Média' | 'Baixa' => {
   return 'Alta';
 };
 
+const calculateProjectProgress = (
+  projects: Project[],
+  tasks: Task[],
+): Project[] => {
+  return projects.map((project) => {
+    const projectTasks = tasks.filter(
+      (task) => task.projectName === project.name,
+    );
+
+    if (projectTasks.length === 0) {
+      return { ...project, progress: 0 };
+    }
+
+    const completedTasks = projectTasks.filter(
+      (task) => task.status === 'Concluído',
+    );
+    const progress = Math.round(
+      (completedTasks.length / projectTasks.length) * 100,
+    );
+    return { ...project, progress };
+  });
+};
+
 export const useDashboardStore = create<DashboardState>((set, get) => ({
   projects: [],
   fetchProjects: async () => {
@@ -132,7 +155,13 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
         },
       }));
 
-      set({ projects: uiProjects, isLoading: false });
+      const { tasks } = get();
+      if (tasks.length > 0) {
+        const updatedProjects = calculateProjectProgress(uiProjects, tasks);
+        set({ projects: updatedProjects, isLoading: false });
+      } else {
+        set({ projects: uiProjects, isLoading: false });
+      }
     } catch (error) {
       console.error('Falha ao buscar projetos:', error);
       set({
@@ -165,10 +194,9 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
   tasks: [],
   fetchTasks: async () => {
+    set({ isLoading: true });
     try {
-      let { projects } = get();
-
-      if (projects.length === 0) {
+      if (get().projects.length === 0) {
         await get().fetchProjects();
       }
 
@@ -204,27 +232,11 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
         };
       });
 
-      const updatedProjects = currentProjects.map((project) => {
-        const projectTasks = uiTasks.filter(
-          (task) => task.projectName === project.name,
-        );
-
-        if (projectTasks.length === 0) {
-          return { ...project, progress: 0 };
-        }
-
-        const completedTasks = projectTasks.filter(
-          (task) => task.status === 'Concluído',
-        );
-        const progress = Math.round(
-          (completedTasks.length / projectTasks.length) * 100,
-        );
-        return { ...project, progress };
-      });
-       
-      set({ tasks: uiTasks, projects: updatedProjects });
+      const updatedProjects = calculateProjectProgress(currentProjects, uiTasks);
+      set({ tasks: uiTasks, projects: updatedProjects, isLoading: false });
     } catch (error) {
       console.error('Erro ao carregar tasks:', error);
+      set({ error: 'Não foi possível carregar as tarefas.', isLoading: false });
     }
   },
 
