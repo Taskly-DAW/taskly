@@ -249,6 +249,7 @@ volumes:
   postgres_data:
   postgres_data_task: # New volume for task_db
   notification_postgres_data:
+  postgres_data_task: # New volume for task_db
 
 networks:
   taskly_network:

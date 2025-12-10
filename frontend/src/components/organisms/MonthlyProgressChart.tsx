@@ -17,7 +17,7 @@ import {
 } from 'recharts';
 import { useShallow } from 'zustand/shallow';
 import React from 'react';
-import { projectOptions } from '@/data/filterOptions';
+import { DashboardState } from '@/types/dashboard';
 
 const generateColorFromString = (str: string): string => {
   let hash = 0;
@@ -27,29 +27,18 @@ const generateColorFromString = (str: string): string => {
   return `hsl(${hash % 360}, 70%, 50%)`;
 };
 
-export const MonthlyProgressChart = () => {
-  const { tasks, filters } = useDashboardStore(
-    useShallow((state) => ({
-      tasks: state.tasks,
-      filters: state.filters,
-    })),
-  );
-
+export const MonthlyProgressChart = ({ tasks, filters, projects }: DashboardState) => {
   const data = React.useMemo(() => {
-    return aggregateMonthlyProgress(tasks, filters);
-  }, [tasks, filters]);
+    return aggregateMonthlyProgress(tasks, projects);
+  }, [tasks, projects]);
 
   const projectsToDisplay = React.useMemo(() => {
-    const allProjectNames = projectOptions
-      .map(p => p.value)
-      .filter(p => p !== 'Todos os Projetos');
-
-    if (filters.project.includes('Todos os Projetos')) {
+    const allProjectNames = projects?.map((p) => p.name);
+    if (filters?.projects?.includes('Todos os Projetos') || !filters?.projects) {
       return allProjectNames;
     }
-    return filters.project.filter(p => p !== 'Todos os Projetos');
-  }, [filters.project]);
-
+    return filters.projects.filter((p) => p !== 'Todos os Projetos');
+  }, [filters?.projects, projects]);
 
   return (
     <Card className="shadow-lg h-full">
@@ -102,11 +91,12 @@ export const MonthlyProgressChart = () => {
               wrapperStyle={{ paddingTop: '10px' }}
             />
 
-            {projectsToDisplay.map((projectName) => (
-              <Bar 
-                key={projectName} 
-                dataKey={projectName} 
-                fill={generateColorFromString(projectName)} />
+            {projectsToDisplay?.map((projectName) => (
+              <Bar
+                key={projectName}
+                dataKey={projectName}
+                fill={generateColorFromString(projectName)}
+              />
             ))}
           </BarChart>
         </ResponsiveContainer>

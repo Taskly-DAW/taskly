@@ -85,10 +85,10 @@ export const StatusDistributionChart = () => {
                   nameKey="name"
                   cx="50%"
                   cy="50%"
-                  innerRadius={90} // Aumentado para um anel mais fino
-                  outerRadius={120} // Aumentado
-                  paddingAngle={3} // Pequeno espaçamento entre as fatias
-                  stroke="none" // Remove a borda padrão para deixar as cores limpas
+                  innerRadius={90}
+                  outerRadius={120}
+                  paddingAngle={3}
+                  stroke="none"
                 >
                   {data.map((entry, index) => (
                     <Cell
