@@ -15,6 +15,7 @@ class Role:
 class User:
     id: str
     username: str
+    email: str
     password_hash: str
     tenant_id: str
     roles: List[Role]

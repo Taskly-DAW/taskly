@@ -13,6 +13,10 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
+    async def get_by_email_and_tenant(self, email: str, tenant_id: str) -> Optional[User]:
+        pass
+
+    @abstractmethod
     async def get_by_id_and_tenant(self, user_id: str, tenant_id: str) -> Optional[User]:
         pass
 

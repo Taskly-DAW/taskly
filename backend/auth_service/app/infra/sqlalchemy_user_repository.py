@@ -28,6 +28,7 @@ class SQLAlchemyUserRepository(IUserRepository):
                 user_orm = UserORM(
                     id=user.id,
                     username=user.username,
+                    email=user.email,
                     password_hash=user.password_hash,
                     tenant_id=user.tenant_id,
                     roles=role_objs
@@ -49,7 +50,20 @@ class SQLAlchemyUserRepository(IUserRepository):
             if not u:
                 return None
             roles = [Role(name=r.name) for r in u.roles]
-            return User(id=u.id, username=u.username, password_hash=u.password_hash, tenant_id=u.tenant_id, roles=roles)
+            return User(id=u.id, username=u.username, email=u.email, password_hash=u.password_hash, tenant_id=u.tenant_id, roles=roles)
+
+    async def get_by_email_and_tenant(self, email: str, tenant_id: str) -> Optional[User]:
+        async with self._AsyncSession() as session:
+            stmt = select(UserORM).options(selectinload(UserORM.roles)).where(
+                UserORM.email == email, 
+                UserORM.tenant_id == tenant_id
+            )
+            result = await session.execute(stmt)
+            u = result.scalar_one_or_none()
+            if not u:
+                return None
+            roles = [Role(name=r.name) for r in u.roles]
+            return User(id=u.id, username=u.username, email=u.email, password_hash=u.password_hash, tenant_id=u.tenant_id, roles=roles)
 
     async def get_by_id_and_tenant(self, user_id: str, tenant_id: str) -> Optional[User]:
         async with self._AsyncSession() as session:
@@ -62,7 +76,7 @@ class SQLAlchemyUserRepository(IUserRepository):
             if not u:
                 return None
             roles = [Role(name=r.name) for r in u.roles]
-            return User(id=u.id, username=u.username, password_hash=u.password_hash, tenant_id=u.tenant_id, roles=roles)
+            return User(id=u.id, username=u.username, email=u.email, password_hash=u.password_hash, tenant_id=u.tenant_id, roles=roles)
 
     async def list_users_by_tenant(self, tenant_id: str) -> List[User]:
         async with self._AsyncSession() as session:
@@ -74,5 +88,5 @@ class SQLAlchemyUserRepository(IUserRepository):
             users = []
             for u in rows:
                 roles = [Role(name=r.name) for r in u.roles]
-                users.append(User(id=u.id, username=u.username, password_hash=u.password_hash, tenant_id=u.tenant_id, roles=roles))
+                users.append(User(id=u.id, username=u.username, email=u.email, password_hash=u.password_hash, tenant_id=u.tenant_id, roles=roles))
             return users
