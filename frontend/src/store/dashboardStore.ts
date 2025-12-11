@@ -1,4 +1,5 @@
 import { getMonthLabel } from '@/lib/utils/dateUtils';
+import authService from '@/services/authService';
 import {
   MonthlyProgressData,
   StatusDistributionData,
@@ -349,16 +350,45 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     ];
   },
 
-  getResponsibleOptions: () => {
-    const { tasks } = get();
-    const responsibleNames = [...new Set(tasks.map((t) => t.responsible.name))];
-    const responsibleOptions = responsibleNames.map((name) => ({
-      label: name,
-      value: name,
-    }));
-    return [
-      { label: 'Todos os Responsáveis', value: 'Todos os Responsáveis' },
-      ...responsibleOptions,
-    ];
-  },
+  fetchUsers: async () => {
+        set({ isLoadingUsers: true, error: null });
+        try {
+          const users = await authService.fetchUsers();
+          set({ users, isLoadingUsers: false });
+        } catch (error) {
+          console.error('Erro ao buscar usuários:', error);
+          set({ 
+            error: 'Erro ao carregar usuários. Tente novamente mais tarde.',
+            isLoadingUsers: false 
+          });
+        }
+      },
+
+  users: [],
+  getResponsibleOptions: (): SelectOption<string>[] => {
+        const { users } = get();
+        return [
+          { label: 'Todos os Responsáveis', value: 'Todos os Responsáveis' },
+          ...users,
+        ];
+      },
+
+  // getResponsibleOptions: async (): Promise<{label: string, value: string}[]> => {
+  //   try {
+  //     // Busca os usuários da API
+  //     const users = await authService.fetchUsers();
+      
+  //     // Retorna os usuários formatados para o select
+  //     return [
+  //       { label: 'Todos os Responsáveis', value: 'Todos os Responsáveis' },
+  //       ...users,
+  //     ];
+  //   } catch (error) {
+  //     console.error('Erro ao buscar responsáveis:', error);
+  //     // Retorna uma lista vazia em caso de erro
+  //     return [
+  //       { label: 'Todos os Responsáveis', value: 'Todos os Responsáveis' },
+  //     ];
+  //   }
+  // },
 }));

@@ -5,6 +5,11 @@ import {
 import { Task } from '@/schemas/taskSchema';
 import { CreateProjectFormData, Project, ProjectUiSchema } from '@/schemas/projectSchema';
 
+export interface SelectOption<T = string> {
+  label: string;
+  value: T;
+}
+
 export interface DashboardFilters {
   projects: string[];
   status: string[];
@@ -25,4 +30,6 @@ export interface DashboardState {
   getFilteredTasks: () => Task[]; // Nova função exposta
   createProject: (data: CreateProjectFormData) => Promise<void>;
   updateProject: (projectId: string, data: CreateProjectFormData) => Promise<void>;
+  getResponsibleOptions: () => SelectOption[];
+  getProjectOptions: () => SelectOption[];
 }

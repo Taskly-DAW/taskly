@@ -8,10 +8,11 @@ import { useDashboardStore } from '@/store/dashboardStore';
 import { CreateProjectModal } from '@/components/organisms/CreateProjectModal';
 
 export default function ProjectsPage() {
-  const { projects, isLoading, error, fetchTasks } = useDashboardStore(
+  const { projects, isLoading, error, fetchTasks, fetchUsers } = useDashboardStore(
     useShallow((state: DashboardState) => ({
       projects: state.projects,
       fetchTasks: state.fetchTasks,
+      fetchUsers: state.fetchUsers,
       isLoading: state.isLoading,
       error: state.error,
     })),
@@ -19,6 +20,7 @@ export default function ProjectsPage() {
 
   useEffect(() => {
     fetchTasks();
+  fetchUsers();
   }, [fetchTasks]);
 
   if (isLoading) {

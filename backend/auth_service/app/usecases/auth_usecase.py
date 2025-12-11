@@ -41,8 +41,9 @@ class AuthUsecase:
         return user
 
     async def authenticate(self, email: str, password: str, tenant_id: str) -> Optional[User]:
-        user = await self.user_repo.get_by_email_and_tenant(email, tenant_id)
-        if not user:
+        # Use get_for_auth to include password_hash for verification
+        user = await self.user_repo.get_for_auth(email, tenant_id)
+        if not user or not user.password_hash:
             return None
         if not pwd_context.verify(password, user.password_hash):
             return None
@@ -61,3 +62,19 @@ class AuthUsecase:
 
     async def list_users_by_tenant(self, tenant_id: str) -> List[User]:
         return await self.user_repo.list_users_by_tenant(tenant_id)
+
+    async def update_user(self, user_id: str, tenant_id: str, dto) -> Optional[User]:
+        user = await self.user_repo.get_by_id_and_tenant(user_id, tenant_id)
+        if not user:
+            return None
+
+        if dto.username is not None:
+            user.username = dto.username
+        if dto.email is not None:
+            user.email = dto.email
+        if dto.roles is not None:
+            from app.domain.models import Role
+            user.roles = [Role(name=role_name) for role_name in dto.roles]
+
+        await self.user_repo.update_user(user)
+        return await self.user_repo.get_by_id_and_tenant(user_id, tenant_id)
