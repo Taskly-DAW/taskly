@@ -12,6 +12,7 @@ export const ProjectApiSchema = z.object({
 export const ProjectUiSchema = z.object({
   id: z.string(),
   name: z.string(),
+  description: z.string().optional(),
   responsible: z.object({
     name: z.string(),
     avatarUrl: z.string().url().optional(),

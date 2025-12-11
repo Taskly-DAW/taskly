@@ -8,6 +8,7 @@ import { useShallow } from 'zustand/react/shallow';
 const COLUMNS = [
   { id: "A Fazer", title: "A Fazer" },
   { id: "Em Progresso", title: "Em Progresso" },
+  { id: "Bloqueadas", title: "Bloqueadas" },
   { id: "Concluído", title: "Concluído" },
 ];
 

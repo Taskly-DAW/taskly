@@ -24,4 +24,5 @@ export interface DashboardState {
   fetchTasks: () => Promise<void>;
   getFilteredTasks: () => Task[]; // Nova função exposta
   createProject: (data: CreateProjectFormData) => Promise<void>;
+  updateProject: (projectId: string, data: CreateProjectFormData) => Promise<void>;
 }

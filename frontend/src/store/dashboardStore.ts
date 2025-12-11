@@ -192,6 +192,27 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     }
   },
 
+  updateProject: async (projectId, updatedData) => {
+    set({ isLoading: true });
+    try {
+      const response = await fetch(`http://localhost:8002/projects/${projectId}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedData),
+        });
+
+      if (!response.ok) throw new Error('Falha ao atualizar projeto');
+
+      await get().fetchProjects(); // Re-fetch para atualizar a lista
+    } catch (error) {
+      console.error(error);
+      set({ error: 'Erro ao atualizar projeto' });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
   tasks: [],
   fetchTasks: async () => {
     set({ isLoading: true });
