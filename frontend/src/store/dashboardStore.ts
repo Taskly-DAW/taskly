@@ -101,7 +101,7 @@ export const aggregateMonthlyProgress = (
 const mapStatus = (apiStatus: string, completed: boolean): string => {
   const map: Record<string, string> = {
     pending: 'A Fazer',
-    block: 'Bloqueado',
+    block: 'Bloqueadas',
     doing: 'Em Progresso',
     done: 'Concluído',
   };
@@ -277,6 +277,7 @@ const { tasks, users } = get(); // Obter a lista de usuários
         return {
           id: t.id.toString(),
           title: t.title,
+          description: t.description || '',
           status: mapStatus(t.status, t.completed),
           priority: mapPriority(t.priority),
           dueDate: new Date(t.created_at),
@@ -455,6 +456,7 @@ const { tasks, users } = get(); // Obter a lista de usuários
         return {
           id: t.id.toString(),
           title: t.title,
+          description: t.description || '',
           status: mapStatus(t.status, t.completed),
           priority: mapPriority(t.priority),
           dueDate: new Date(t.created_at),

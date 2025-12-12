@@ -15,11 +15,11 @@ const routes = [
     label: "Projetos",
     href: "/projects",
   },
-  {
-    icon: ListChecks,
-    label: "Tarefas",
-    href: "/board",
-  },
+  // {
+  //   icon: ListChecks,
+  //   label: "Tarefas",
+  //   href: "/board",
+  // },
   {
     icon: BarChart2,
     label: "Relatórios",

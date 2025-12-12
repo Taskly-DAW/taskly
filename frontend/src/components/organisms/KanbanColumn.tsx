@@ -12,9 +12,10 @@ interface KanbanColumnProps {
   id: string;
   title: string;
   tasks: Task[];
+  onTaskUpdated?: () => void;
 }
 
-export const KanbanColumn = ({ id, title, tasks }: KanbanColumnProps) => {
+export const KanbanColumn = ({ id, title, tasks, onTaskUpdated }: KanbanColumnProps) => {
   return (
     <div className="flex flex-col w-full max-w-sm min-w-[300px] bg-gray-50 border rounded-lg shadow-inner p-3">
       <div className="flex justify-between items-center mb-4">
@@ -56,6 +57,7 @@ export const KanbanColumn = ({ id, title, tasks }: KanbanColumnProps) => {
                         new Date(task.dueDate).toISOString().split('T')[0]
                       }
                       responsible={task.responsible}
+                      onTaskUpdated={onTaskUpdated}
                     />
                   </div>
                 )}
