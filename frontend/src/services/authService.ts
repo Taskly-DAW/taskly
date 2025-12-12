@@ -32,8 +32,6 @@ export const authService = {
     if (!token) {
       throw new Error('Token de autenticação ou tenantId não encontrado');
     }
-
-    console.log(token.state.token);
     
     try {
       const response = await fetch(`${API_BASE_URL}/auth/auth/users/`, {
@@ -48,16 +46,13 @@ export const authService = {
       if (!response.ok) {
         throw new Error(`Erro ao buscar usuários: ${response.statusText}`);
       }
-
-      console.log(response);
       
-
       const users: User[] = await response.json();
       
       // Transforma os usuários em opções para o select
       return users.map(user => ({
-        value: user.email, // ou user.id, dependendo do que você quer usar como valor
-        label: `${user.first_name} ${user.last_name}`.trim() || user.email,
+        value: user.id.toString(), // ou user.id, dependendo do que você quer usar como valor
+        label: user.username || user.email,
       }));
     } catch (error) {
       console.error('Erro ao buscar usuários:', error);

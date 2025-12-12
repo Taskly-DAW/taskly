@@ -1,7 +1,10 @@
-import { Search, Bell } from 'lucide-react';
+"use client"
+
+import { Search, Bell, MoreVertical } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 
 export const Header = () => {
   return (
@@ -24,13 +27,26 @@ export const Header = () => {
           <Bell className="h-5 w-5" />
         </Button>
 
-        <Avatar className="h-9 w-9 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-colors">
+        
+
+        <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <Avatar className="h-9 w-9 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-colors">
           <AvatarImage src="/path/to/profile-image.jpg" alt="User Profile" />
 
           <AvatarFallback className="bg-blue-100 text-blue-600 font-medium">
             JD
           </AvatarFallback>
         </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => {}}>
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
       </div>
     </header>
   );

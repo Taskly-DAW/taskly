@@ -52,7 +52,7 @@ export function CreateProjectModal() {
   });
 
   const onSubmit = async (data: CreateProjectFormData) => {
-    await createProject(data);
+    await createProject({ ...data, tenant_id: '' });
     setOpen(false);
     reset();
   };
@@ -95,12 +95,12 @@ export function CreateProjectModal() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="responsible">Responsável</Label>
+            <Label htmlFor="responsible_id">Responsável</Label>
             <Select
               onValueChange={(value) => {
                 // Atualiza o valor do formulário quando uma opção é selecionada
-                const setValue = register('responsible').onChange;
-                setValue?.({ target: { name: 'responsible', value } } as any);
+                const setValue = register('responsible_id').onChange;
+                setValue?.({ target: { name: 'responsible_id', value } } as any);
               }}
               defaultValue=""
             >
@@ -120,8 +120,8 @@ export function CreateProjectModal() {
                 ))}
               </SelectContent>
             </Select>
-            {errors.responsible && (
-              <p className="text-sm text-red-500">{errors.responsible.message}</p>
+            {errors.responsible_id && (
+              <p className="text-sm text-red-500">{errors.responsible_id.message}</p>
             )}
           </div>
 
