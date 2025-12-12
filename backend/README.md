@@ -2,7 +2,7 @@
 
 Microservices backend for Taskly application with authentication service.
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Start development environment
@@ -22,29 +22,62 @@ make logs-auth       # Auth service logs
 open http://localhost:8000/auth/docs
 ```
 
-## 🌐 API Gateway
+## API Gateway
 
-O **API Gateway** é o ponto de entrada centralizado para todos os microserviços:
+O API Gateway é o ponto de entrada centralizado para todos os microserviços:
 
-- **✅ Roteamento Inteligente**: Direciona requisições para serviços apropriados
-- **🔒 Segurança Centralizad**: Auth service isolado da rede externa
-- **📊 Monitoramento**: Logs centralizados de todas as requisições
-- **🚀 Performance**: Cache e load balancing para alta disponibilidade
+- Roteamento Inteligente: Direciona requisições para serviços apropriados
+- Segurança Centralizada: Auth service isolado da rede externa
+- Monitoramento: Logs centralizados de todas as requisições
+- Performance: Cache e load balancing para alta disponibilidade
 
 ### Roteamento:
 - `/auth/*` → Auth Service
-- `/notifications/*` → Notification Service (futuro)
+- `/projects/*` → Project Service
+- `/tasks/*` → Task Service
+- `/tenants/*` → Tenant Service
 - `/health` → Gateway health check
 
-## 📦 Services
+### Estrutura da API
 
-- **🌐 API Gateway**: Centralized entry point for all microservices (Port: 8000)
-- **🔐 Auth Service**: Authentication and user management (Internal only - via Gateway)
-- **🗄️ PostgreSQL**: Database for auth service (Internal only)
-- **📊 Redpanda**: Event streaming platform (Port: 9092, Console: 8080)
-- **🔄 Orchestrator**: Event orchestration service (Internal only)
+## Projetos
 
-## 🛠️ Development Commands
+- POST /projects/ - Cria um novo projeto
+- GET /projects/ - Lista todos os projetos
+- GET /projects/{project_id} - Obtém detalhes de um projeto
+- PUT /projects/{project_id} - Atualiza um projeto
+- DELETE /projects/{project_id} - Remove um projeto
+- GET /projects/{project_id}/tasks - Lista tarefas de um projeto
+
+## Tarefas
+
+- POST /tasks/ - Cria uma nova tarefa
+- GET /tasks/ - Lista todas as tarefas
+- GET /tasks/{task_id} - Obtém detalhes de uma tarefa
+- PUT /tasks/{task_id} - Atualiza uma tarefa
+- DELETE /tasks/{task_id} - Remove uma tarefa
+
+## ulti-tenant
+
+- GET /tenants/{tenant_id}/tasks - Lista tarefas de um tenant específico
+
+## Serviços
+
+- API REST: FastAPI (Porta: 8000)
+- Banco de Dados: PostgreSQL
+- ORM: SQLAlchemy
+- Autenticação: JWT (a implementar)
+
+
+## Services
+
+- API Gateway: Centralized entry point for all microservices (Port: 8000)
+- Auth Service: Authentication and user management (Internal only - via Gateway)
+- PostgreSQL: Database for auth service (Internal only)
+- Redpanda: Event streaming platform (Port: 9092, Console: 8080)
+- Orchestrator: Event orchestration service (Internal only)
+
+## Development Commands
 
 ### Basic Operations
 ```bash
