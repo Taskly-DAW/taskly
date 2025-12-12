@@ -110,3 +110,34 @@ async def update_user_endpoint(
         tenant_id=updated_user.tenant_id,
         roles=[r.name for r in updated_user.roles]
     )
+
+@router.delete("/users/{user_id}")
+async def delete_user_endpoint(
+    user_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Delete user by ID (admin only).
+    
+    - **user_id**: ID of the user to delete
+    """
+    # Only allow admins to delete users
+    if not any(role.name == "admin" for role in current_user.roles):
+        raise HTTPException(
+            status_code=403,
+            detail="Only admins can delete users"
+        )
+    
+    # Users cannot delete themselves
+    if user_id == current_user.id:
+        raise HTTPException(
+            status_code=400,
+            detail="Users cannot delete themselves"
+        )
+    
+    # Delete the user (using the same tenant as the current user for security)
+    deleted = await auth_uc.delete_user(user_id, current_user.tenant_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="User not found")
+        
+    return {"message": "User deleted successfully"}

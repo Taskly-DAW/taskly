@@ -159,3 +159,25 @@ class SQLAlchemyUserRepository(IUserRepository):
             except Exception as e:
                 await session.rollback()
                 raise e
+
+    async def delete_user(self, user_id: str, tenant_id: str) -> bool:
+        """Delete user by ID and tenant_id. Returns True if user was deleted, False if not found"""
+        async with self._AsyncSession() as session:
+            try:
+                stmt = select(UserORM).where(
+                    UserORM.id == user_id,
+                    UserORM.tenant_id == tenant_id
+                )
+                result = await session.execute(stmt)
+                user_orm = result.scalar_one_or_none()
+                
+                if not user_orm:
+                    return False
+                
+                await session.delete(user_orm)
+                await session.commit()
+                return True
+                
+            except Exception as e:
+                await session.rollback()
+                raise e

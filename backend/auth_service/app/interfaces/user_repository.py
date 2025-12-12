@@ -32,3 +32,8 @@ class IUserRepository(ABC):
     async def get_for_auth(self, email: str, tenant_id: str) -> Optional[User]:
         """Get user with password hash for authentication purposes"""
         pass
+
+    @abstractmethod
+    async def delete_user(self, user_id: str, tenant_id: str) -> bool:
+        """Delete user by ID and tenant_id. Returns True if user was deleted, False if not found"""
+        pass
