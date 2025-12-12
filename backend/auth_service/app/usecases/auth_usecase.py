@@ -78,3 +78,7 @@ class AuthUsecase:
 
         await self.user_repo.update_user(user)
         return await self.user_repo.get_by_id_and_tenant(user_id, tenant_id)
+
+    async def delete_user(self, user_id: str, tenant_id: str) -> bool:
+        """Delete user by ID and tenant_id. Returns True if user was deleted, False if not found"""
+        return await self.user_repo.delete_user(user_id, tenant_id)
