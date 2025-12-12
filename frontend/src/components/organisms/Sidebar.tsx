@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Folder, ListChecks, BarChart2 } from 'lucide-react';
+import { LayoutDashboard, Folder, ListChecks, BarChart2, Users } from 'lucide-react';
 import { SidebarItem } from '@/components/molecules/SidebarItem';
 
 const routes = [
@@ -14,6 +14,11 @@ const routes = [
     icon: Folder,
     label: "Projetos",
     href: "/projects",
+  },
+  {
+    icon: Users,
+    label: "Usuários",
+    href: "/users",
   },
   // {
   //   icon: ListChecks,

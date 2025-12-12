@@ -33,10 +33,10 @@ export default function TasksPage() {
   useEffect(() => {
     const loadTasks = async () => {
       if (projectId) {
-        await fetchProjects(); // Carrega projetos para ter informações
+        await fetchProjects();
         await fetchTasksByProject(projectId);
       } else {
-        await fetchTasks(); // Carrega todas as tasks se não houver projectId
+        await fetchTasks();
       }
     };
     
