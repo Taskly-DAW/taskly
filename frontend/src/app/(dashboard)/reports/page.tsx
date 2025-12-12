@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ReportFiltersCard from "@/components/organisms/ReportFiltersCard/ReportFiltersCard";
 import TasksChart from "@/components/organisms/TasksChart/TasksChart";
 import MetricsGrid from "@/components/organisms/MetricsGrid/MetricsGrid";
 import TasksTable from "@/components/molecules/TasksTable";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useDashboardStore } from '@/store/dashboardStore';
+import { useShallow } from 'zustand/react/shallow';
 
-export default function ProjectsPage() {
+export default function ReportsPage() {
   const [chartType, setChartType] = useState("bar");
 
   const [startDate, setStartDate] = useState("");
@@ -16,21 +18,36 @@ export default function ProjectsPage() {
   const [userFilter, setUserFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const tasks = [
-    { nome: "Desenvolver API", projeto: "Projeto Alpha", usuario: "João Silva", vencimento: "2024-07-30", status: "Em Andamento" },
-    { nome: "Revisar documentação", projeto: "Projeto Beta", usuario: "Maria Oliveira", vencimento: "2024-07-25", status: "Concluído" },
-    { nome: "Planejar sprint 3", projeto: "Projeto Alpha", usuario: "Pedro Souza", vencimento: "2024-07-22", status: "Atrasado" },
-    { nome: "Criar layout mobile", projeto: "Projeto Gamma", usuario: "Ana Lima", vencimento: "2024-07-21", status: "Não Iniciado" },
-    { nome: "Setup CI/CD", projeto: "Projeto Delta", usuario: "João Silva", vencimento: "2024-07-19", status: "Concluído" },
-    { nome: "Reunião com cliente", projeto: "Projeto Beta", usuario: "Carlos Alberto", vencimento: "2024-07-28", status: "Em Andamento" },
-    { nome: "Análise de logs", projeto: "Projeto Gamma", usuario: "Ana Lima", vencimento: "2024-07-18", status: "Concluído" },
-    { nome: "Testes automatizados", projeto: "Projeto Alpha", usuario: "Pedro Souza", vencimento: "2024-08-01", status: "Atrasado" },
-    { nome: "Criar protótipo", projeto: "Projeto Delta", usuario: "Maria Oliveira", vencimento: "2024-07-29", status: "Em Andamento" },
-    { nome: "Deploy produção", projeto: "Projeto Beta", usuario: "Carlos Alberto", vencimento: "2024-07-31", status: "Não Iniciado" },
-  ];
+  const { tasks, projects, fetchTasks, fetchProjects } = useDashboardStore(
+    useShallow((state) => ({
+      tasks: state.tasks,
+      projects: state.projects,
+      fetchTasks: state.fetchTasks,
+      fetchProjects: state.fetchProjects,
+    }))
+  );
+
+  useEffect(() => {
+    const loadData = async () => {
+      await fetchProjects();
+      await fetchTasks();
+    };
+    loadData();
+  }, [fetchProjects, fetchTasks]);
+
+  // Converter tasks para o formato esperado pelos componentes
+  const formattedTasks = useMemo(() => {
+    return tasks.map((task) => ({
+      nome: task.title,
+      projeto: task.projectName,
+      usuario: task.responsible.name,
+      vencimento: task.dueDate.toISOString().split('T')[0],
+      status: task.status,
+    }));
+  }, [tasks]);
 
   const filteredTasks = useMemo(() => {
-    return tasks.filter((t) => {
+    return formattedTasks.filter((t) => {
       const withinStart = startDate ? new Date(t.vencimento) >= new Date(startDate) : true;
       const withinEnd = endDate ? new Date(t.vencimento) <= new Date(endDate) : true;
 
@@ -40,14 +57,30 @@ export default function ProjectsPage() {
 
       return withinStart && withinEnd && matchProject && matchUser && matchStatus;
     });
-  }, [tasks, startDate, endDate, projectFilter, userFilter, statusFilter]);
+  }, [formattedTasks, startDate, endDate, projectFilter, userFilter, statusFilter]);
 
   const chartData = [
-    { name: "Concluído", value: filteredTasks.filter(t => t.status === "Concluído").length, color: "#1E88E5" },
-    { name: "Em Andamento", value: filteredTasks.filter(t => t.status === "Em Andamento").length, color: "#212121" },
-    { name: "Atrasado", value: filteredTasks.filter(t => t.status === "Atrasado").length, color: "#E57373" },
-    { name: "Não Iniciado", value: filteredTasks.filter(t => t.status === "Não Iniciado").length, color: "#424242" }
+    { name: "Concluído", value: filteredTasks.filter(t => t.status === "Concluído").length, color: "#22C55E" },
+    { name: "Em Progresso", value: filteredTasks.filter(t => t.status === "Em Progresso").length, color: "#3B82F6" },
+    { name: "Bloqueadas", value: filteredTasks.filter(t => t.status === "Bloqueadas").length, color: "#EF4444" },
+    { name: "A Fazer", value: filteredTasks.filter(t => t.status === "A Fazer").length, color: "#6B7280" }
   ];
+
+  // Obter opções únicas para filtros
+  const projectOptions = useMemo(() => {
+    const uniqueProjects = [...new Set(formattedTasks.map(t => t.projeto))];
+    return uniqueProjects.filter(project => project !== 'Desconhecido');
+  }, [formattedTasks]);
+
+  const userOptions = useMemo(() => {
+    const uniqueUsers = [...new Set(formattedTasks.map(t => t.usuario))];
+    return uniqueUsers;
+  }, [formattedTasks]);
+
+  const statusOptions = useMemo(() => {
+    const uniqueStatuses = [...new Set(formattedTasks.map(t => t.status))];
+    return uniqueStatuses;
+  }, [formattedTasks]);
 
   return (
     <div className="p-8 w-full text-gray-900">
@@ -61,6 +94,9 @@ export default function ProjectsPage() {
         setProjectFilter={setProjectFilter}
         setUserFilter={setUserFilter}
         setStatusFilter={setStatusFilter}
+        projectOptions={projectOptions}
+        userOptions={userOptions}
+        statusOptions={statusOptions}
         resetFilters={() => {
           setStartDate("");
           setEndDate("");
@@ -80,7 +116,7 @@ export default function ProjectsPage() {
 
       <Card className="shadow-sm mb-10">
         <CardHeader>
-          <CardTitle>Tarefas Correspondentes</CardTitle>
+          <CardTitle>Tarefas Correspondentes ({filteredTasks.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <TasksTable tasks={filteredTasks} />
