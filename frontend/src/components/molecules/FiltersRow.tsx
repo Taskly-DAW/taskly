@@ -9,6 +9,7 @@ export default function FiltersRow({
   projectFilter, userFilter, statusFilter,
   setProjectFilter, setUserFilter, setStatusFilter,
   projectOptions, userOptions, statusOptions,
+  generateReport,
   resetFilters
 }: any) {
 
@@ -59,7 +60,9 @@ export default function FiltersRow({
 
       {/* BOTOES */}
       <div className="flex items-center gap-3 pb-1">
-        <Button className="bg-blue-600 hover:bg-blue-700">Gerar Relatório <DownloadIcon className="w-4 h-4" /></Button>
+        <Button className="bg-blue-600 hover:bg-blue-700" onClick={generateReport}>
+          Gerar Relatório <DownloadIcon className="w-4 h-4" />
+        </Button>
         <Button variant="outline" onClick={resetFilters}>
           <RotateCcw className="w-4 h-4" />
         </Button>

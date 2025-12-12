@@ -82,6 +82,45 @@ export default function ReportsPage() {
     return uniqueStatuses;
   }, [formattedTasks]);
 
+  // Função para gerar e baixar relatório em CSV
+  const generateReport = () => {
+    if (filteredTasks.length === 0) {
+      alert('Não há tarefas para gerar o relatório com os filtros selecionados.');
+      return;
+    }
+
+    // Criar cabeçalho do CSV
+    const headers = ['Tarefa', 'Projeto', 'Responsável', 'Vencimento', 'Status'];
+    
+    // Criar conteúdo do CSV
+    const csvContent = [
+      headers.join(','),
+      ...filteredTasks.map(task => [
+        `"${task.nome}"`,
+        `"${task.projeto}"`,
+        `"${task.usuario}"`,
+        `"${task.vencimento}"`,
+        `"${task.status}"`
+      ].join(','))
+    ].join('\n');
+
+    // Criar blob e download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    // Gerar nome do arquivo com data atual
+    const today = new Date().toISOString().split('T')[0];
+    const fileName = `relatorio_tarefas_${today}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="p-8 w-full text-gray-900">
       <h1 className="text-4xl font-bold mb-10">Relatórios de Tarefas</h1>
@@ -97,6 +136,7 @@ export default function ReportsPage() {
         projectOptions={projectOptions}
         userOptions={userOptions}
         statusOptions={statusOptions}
+        generateReport={generateReport}
         resetFilters={() => {
           setStartDate("");
           setEndDate("");
