@@ -12,6 +12,7 @@ class TaskUseCase:
         task = Task(
             title=task_data.title,
             description=task_data.description,
+            responsible_id=task_data.responsible_id,
             status=task_data.status,
             priority=task_data.priority,
             completed=task_data.completed,
@@ -25,22 +26,18 @@ class TaskUseCase:
     def get_all_tasks(self, skip: int = 0, limit: int = 100) -> List[Task]:
         return self.task_repository.get_all(skip=skip, limit=limit)
 
+    def get_tasks_by_project_id(self, project_id: int) -> List[Task]:
+        return self.task_repository.get_by_project_id(project_id)
+
     def update_task(self, task_id: int, task_data: TaskUpdateDTO) -> Optional[Task]:
         existing_task = self.task_repository.get_by_id(task_id)
         if not existing_task:
             return None
 
         # Update only provided fields
-        if task_data.title is not None:
-            existing_task.title = task_data.title
-        if task_data.description is not None:
-            existing_task.description = task_data.description
-        if task_data.status is not None:
-            existing_task.status = task_data.status
-        if task_data.priority is not None:
-            existing_task.priority = task_data.priority
-        if task_data.completed is not None:
-            existing_task.completed = task_data.completed
+        update_data = task_data.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(existing_task, key, value)
 
         return self.task_repository.update(task_id, existing_task)
 

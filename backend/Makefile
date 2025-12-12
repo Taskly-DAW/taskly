@@ -175,6 +175,10 @@ db-query:
 	@echo "💻 Run custom query (usage: make db-query SQL='SELECT * FROM users;')"
 	docker-compose exec auth_db psql -U taskly_user -d auth_service -c "$(SQL)"
 
+db-fix-auth:
+	@echo "🔧 Applying temporary fix to auth database..."
+	docker-compose exec auth_db psql -U taskly_user -d auth_service -c "ALTER TABLE users ADD COLUMN email VARCHAR(255) UNIQUE;"
+
 db-notifications:
 	@echo "👥 Notifications table content..."
 	docker-compose exec postgres psql -U notification_user -d taskly_notifications -c "SELECT id, tenant_id, recipient_email, recipient_name, status, priority  FROM notifications;"
@@ -204,11 +208,11 @@ test-coverage:
 # Database Operations
 db-migrate-auth:
 	@echo "🗄️ Running auth service database migrations..."
-	docker-compose exec auth_service alembic upgrade head
+	docker-compose exec auth_service bash -c "cd /app && pip install alembic && alembic upgrade head"
 
 db-migrate-task:
 	@echo "🗄️ Running task service database migrations..."
-	docker-compose exec task_service alembic upgrade head
+	docker-compose run --rm alembic_migrate
 
 db-reset:
 	@echo "⚠️ Resetting database (this will destroy all data)..."

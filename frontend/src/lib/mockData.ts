@@ -32,7 +32,7 @@ const RESPONSIBLE_CL: Responsible = { name: "Carlos Lima", avatarUrl: "/img/avat
 
 
 export const MOCK_TASKS: Task[] = [
-  // TAREFAS CONCLUÍDAS (Maioria)
+  // TAREFAS CONCLUÍDAS
   { id: "T001", title: "Configurar variáveis de ambiente", status: "Concluídas", priority: "Média", dueDate: "2025-05-10", responsible: RESPONSIBLE_MO, projectId: "P1", projectName: "TaskFlow MVP" },
   { id: "T002", title: "Refatorar componente de Sidebar", status: "Concluídas", priority: "Baixa", dueDate: "2025-04-20", responsible: RESPONSIBLE_JS, projectId: "P1", projectName: "TaskFlow MVP" },
   { id: "T003", title: "Desenho UI/UX do Painel", status: "Concluídas", priority: "Alta", dueDate: "2025-05-01", responsible: RESPONSIBLE_AS, projectId: "P2", projectName: "Onboarding" },

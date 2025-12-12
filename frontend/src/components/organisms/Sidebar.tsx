@@ -18,7 +18,7 @@ const routes = [
   {
     icon: ListChecks,
     label: "Tarefas",
-    href: "/tasks",
+    href: "/board",
   },
   {
     icon: BarChart2,

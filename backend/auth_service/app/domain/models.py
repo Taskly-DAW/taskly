@@ -15,6 +15,7 @@ class Role:
 class User:
     id: str
     username: str
-    password_hash: str
+    email: str
     tenant_id: str
     roles: List[Role]
+    password_hash: Optional[str] = None

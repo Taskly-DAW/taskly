@@ -16,6 +16,10 @@ class ProjectRepository(ABC):
         pass
 
     @abstractmethod
+    def get_all_by_tenant(self, tenant_id: str) -> List[Project]:
+        pass
+
+    @abstractmethod
     def update(self, project_id: int, project: Project) -> Optional[Project]:
         pass
 

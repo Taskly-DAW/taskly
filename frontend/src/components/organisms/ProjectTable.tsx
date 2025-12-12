@@ -13,11 +13,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreVertical } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { MoreVertical, ArrowDown, ArrowUp } from 'lucide-react';
+import { UpdateProjectModal } from './UpdateProjectModal';
 
 import { Project } from '@/schemas/projectSchema';
 import { ProgressCell } from '@/components/molecules/ProgressCell';
 import { Button } from '../ui/button';
+
+type SortDirection = 'ascending' | 'descending';
+type SortableProjectKeys = 'name' | 'responsible' | 'progress' | 'dueDate';
+
+interface SortConfig {
+  key: SortableProjectKeys;
+  direction: SortDirection;
+}
 
 interface ProjectTableProps {
   projects: Project[];
@@ -31,6 +41,45 @@ const formatDate = (date: Date) =>
   });
 
 export const ProjectTable = ({ projects }: ProjectTableProps) => {
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
+
+  const sortedProjects = useMemo(() => {
+    let sortableItems = [...projects];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = sortConfig.key === 'responsible' ? a.responsible.name : a[sortConfig.key];
+        const bValue = sortConfig.key === 'responsible' ? b.responsible.name : b[sortConfig.key];
+
+        if (aValue < bValue) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [projects, sortConfig]);
+
+  const requestSort = (key: SortableProjectKeys) => {
+    let direction: SortDirection = 'ascending';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIcon = (key: SortableProjectKeys) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      return null;
+    }
+    if (sortConfig.direction === 'ascending') {
+      return <ArrowUp className="h-4 w-4" />;
+    }
+    return <ArrowDown className="h-4 w-4" />;
+  };
   return (
     <div className="rounded-lg border bg-white shadow-md">
       <h2 className="text-xl font-semibold p-4 border-b">
@@ -40,16 +89,45 @@ export const ProjectTable = ({ projects }: ProjectTableProps) => {
       <Table>
         <TableHeader className="bg-gray-50">
           <TableRow>
-            <TableHead className="text-gray-700 w-[300px] p-4">Nome do Projeto</TableHead>
-            <TableHead className="text-gray-700 w-[200px]">Responsável</TableHead>
-            <TableHead className="text-gray-700 w-[200px]">Progresso</TableHead>
-            <TableHead className="text-gray-700 w-[120px]">Data Final</TableHead>
-            <TableHead className="text-gray-700 w-[80px] text-right">Ações</TableHead>
+            <TableHead className="text-gray-700 w-[300px] p-3">
+  <Button className='px-0 has-[>svg]:px-0' variant="ghost" onClick={() => requestSort('name')}>
+    Nome do Projeto
+    {getSortIcon('name')}
+  </Button>
+</TableHead>
+            <TableHead className="text-gray-700 w-[200px]">
+  <Button className='px-0 has-[>svg]:px-0' variant="ghost" onClick={() => requestSort('responsible')}>
+    Responsável
+    {getSortIcon('responsible')}
+  </Button>
+</TableHead>
+            <TableHead className="text-gray-700 w-[200px]">
+  <Button className='px-0 has-[>svg]:px-0' variant="ghost" onClick={() => requestSort('progress')}>
+    Progresso
+    {getSortIcon('progress')}
+  </Button>
+</TableHead>
+            <TableHead className="text-gray-700 w-[120px]">
+  <Button className='px-0 has-[>svg]:px-0'  variant="ghost" onClick={() => requestSort('dueDate')}>
+    Data Final
+    {getSortIcon('dueDate')}
+  </Button>
+</TableHead>
+            <TableHead className="text-gray-700 w-[80px] text-right pr-4">Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {projects.map((project) => (
-            <TableRow key={project.id}>
+          {sortedProjects.map((project) => (
+                        <TableRow key={project.id}>
+              <UpdateProjectModal
+                project={editingProject!}
+                open={!!editingProject && editingProject.id === project.id}
+                onOpenChange={(isOpen) => {
+                  if (!isOpen) {
+                    setEditingProject(null);
+                  }
+                }}
+              />
               <TableCell className="font-medium text-gray-900 p-4">
                 {project.name}
               </TableCell>
@@ -86,7 +164,9 @@ export const ProjectTable = ({ projects }: ProjectTableProps) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
-                    <DropdownMenuItem>Editar</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setEditingProject(project)}>
+  Editar
+</DropdownMenuItem>
                     <DropdownMenuItem>Arquivar</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

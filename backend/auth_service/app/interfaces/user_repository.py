@@ -13,9 +13,22 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
+    async def get_by_email_and_tenant(self, email: str, tenant_id: str) -> Optional[User]:
+        pass
+
+    @abstractmethod
     async def get_by_id_and_tenant(self, user_id: str, tenant_id: str) -> Optional[User]:
         pass
 
     @abstractmethod
     async def list_users_by_tenant(self, tenant_id: str) -> List[User]:
+        pass
+
+    @abstractmethod
+    async def update_user(self, user: User) -> None:
+        pass
+        
+    @abstractmethod
+    async def get_for_auth(self, email: str, tenant_id: str) -> Optional[User]:
+        """Get user with password hash for authentication purposes"""
         pass
