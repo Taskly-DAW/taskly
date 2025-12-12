@@ -69,6 +69,15 @@ export default function TasksPage() {
     }
   };
 
+  const handleTaskUpdated = () => {
+    // Recarregar as tasks após editar uma task
+    if (projectId) {
+      fetchTasksByProject(projectId);
+    } else {
+      fetchTasks();
+    }
+  };
+
   return (
     <div className="p-6 h-full flex flex-col">
       <div className="flex justify-between items-center mb-8">
@@ -89,6 +98,7 @@ export default function TasksPage() {
                 id={col.id}
                 title={col.title}
                 tasks={columnTasks}
+                onTaskUpdated={handleTaskUpdated}
               />
             );
           })}

@@ -20,6 +20,9 @@ import {
 import { Label } from '@/components/ui/label';
 import { Edit } from 'lucide-react';
 import { Task } from '@/schemas/taskSchema';
+import { useDashboardStore } from '@/store/dashboardStore';
+import { useSearchParams } from 'next/navigation';
+import { useShallow } from 'zustand/react/shallow';
 
 interface EditTaskModalProps {
   task: Task | null;
@@ -56,12 +59,24 @@ export const EditTaskModal = ({ task, open, onOpenChange, onTaskUpdated }: EditT
     status: 'todo' as 'todo' | 'doing' | 'block' | 'done',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const searchParams = useSearchParams();
+  const projectId = searchParams.get('projectId');
+  
+  const { updateTask, fetchTasksByProject, fetchTasks, projects } = useDashboardStore(
+    useShallow((state) => ({
+      updateTask: state.updateTask,
+      fetchTasksByProject: state.fetchTasksByProject,
+      fetchTasks: state.fetchTasks,
+      projects: state.projects,
+    }))
+  );
 
   useEffect(() => {
     if (task && open) {
       setFormData({
         title: task.title,
-        description: '', // Task não tem description no schema atual
+        description: task.description || '',
         status: statusMapping[task.status] || 'todo',
       });
     }
@@ -77,24 +92,27 @@ export const EditTaskModal = ({ task, open, onOpenChange, onTaskUpdated }: EditT
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`http://localhost:8002/tasks/${task.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: formData.title,
-          project_id: 1, // TODO: Obter do projeto atual
-          description: formData.description,
-          status: formData.status,
-          priority: 0,
-          completed: formData.status === 'done',
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Erro ao atualizar tarefa');
+      // Encontrar o project_id correto
+      let project_id = 1; // valor padrão
+      
+      if (projectId) {
+        project_id = parseInt(projectId);
+      } else {
+        // Tentar encontrar pelo nome do projeto da task
+        const project = projects.find(p => p.name === task.projectName);
+        if (project) {
+          project_id = parseInt(project.id);
+        }
       }
+
+      await updateTask(task.id, {
+        title: formData.title,
+        project_id,
+        description: formData.description,
+        status: formData.status,
+        priority: 0,
+        completed: formData.status === 'done',
+      });
 
       onOpenChange(false);
       onTaskUpdated?.();

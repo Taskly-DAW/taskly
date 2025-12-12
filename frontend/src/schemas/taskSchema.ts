@@ -15,6 +15,7 @@ export const TaskApiSchema = z.object({
 export const TaskUiSchema = z.object({
   id: z.string(),
   title: z.string(),
+  description: z.string().nullable().optional(),
   status: z.string(),
   priority: z.enum(['Alta', 'Média', 'Baixa']),
   dueDate: z.date(),
