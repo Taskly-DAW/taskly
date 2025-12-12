@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
 from .database import get_db, Base, engine
@@ -14,6 +15,19 @@ from .schemas import ProjectResponseDTO, ProjectWithTasksResponseDTO, TaskRespon
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Task Service API", version="1.0.0")
+
+# --- CORS Middleware ---
+# Permite que o frontend (em outro domínio/porta) acesse a API.
+# O "*" é permissivo demais para produção, mas ótimo para desenvolvimento.
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todas as origens
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos os métodos (GET, POST, etc.)
+    allow_headers=["*"],  # Permite todos os cabeçalhos
+)
+
 
 # Dependency Injector for ProjectUseCase
 def get_project_use_case(db: Session = Depends(get_db)) -> ProjectUseCase:
@@ -65,6 +79,14 @@ def update_project_endpoint(
         raise HTTPException(status_code=404, detail="Project not found")
     return ProjectResponseDTO.model_validate(updated_project.to_dict())
 
+@app.get("/projects/{project_id}/tasks", response_model=List[TaskResponseDTO])
+def read_tasks_for_project_endpoint(
+    project_id: int,
+    task_use_case: TaskUseCase = Depends(get_task_use_case)
+):
+    tasks = task_use_case.get_tasks_by_project_id(project_id)
+    return [TaskResponseDTO.model_validate(t.to_dict()) for t in tasks]
+
 @app.delete("/projects/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_project_endpoint(
     project_id: int,
@@ -73,6 +95,19 @@ def delete_project_endpoint(
     if not project_use_case.delete_project(project_id):
         raise HTTPException(status_code=404, detail="Project not found")
     return {"message": "Project deleted successfully"}
+
+@app.get("/tenants/{tenant_id}/tasks", response_model=List[TaskResponseDTO])
+def read_tasks_for_tenant_endpoint(
+    tenant_id: str,
+    project_use_case: ProjectUseCase = Depends(get_project_use_case),
+    task_use_case: TaskUseCase = Depends(get_task_use_case)
+):
+    projects = project_use_case.get_projects_by_tenant_id(tenant_id)
+    all_tasks = []
+    for project in projects:
+        tasks = task_use_case.get_tasks_by_project_id(project.id)
+        all_tasks.extend(tasks)
+    return [TaskResponseDTO.model_validate(t.to_dict()) for t in all_tasks]
 
 # --- Task Endpoints ---
 

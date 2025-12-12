@@ -16,6 +16,10 @@ class TaskRepository(ABC):
         pass
 
     @abstractmethod
+    def get_by_project_id(self, project_id: int) -> List[Task]:
+        pass
+
+    @abstractmethod
     def update(self, task_id: int, task: Task) -> Optional[Task]:
         pass
 

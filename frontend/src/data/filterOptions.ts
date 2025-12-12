@@ -7,13 +7,10 @@ export const projectOptions = [
 ];
 
 export const statusOptions = [
-    { value: 'all', label: 'Todos os Status' },
-    { value: 'Concluídas', label: 'Concluídas' },
-    { value: 'Em Andamento', label: 'Em Andamento' },
-    { value: 'Atrasadas', label: 'Atrasadas' },
-    { value: 'A Fazer', label: 'A Fazer' },
-    { value: 'Em Progresso', label: 'Em Progresso' },
-    { value: 'Concluído', label: 'Concluído' },
+    { value: 'todo', label: 'A Fazer' },
+    { value: 'doing', label: 'Em Andamento' },
+    { value: 'blocked', label: 'Bloqueado' },
+    { value: 'done', label: 'Concluído' },
 ];
 
 export const responsibleOptions = [

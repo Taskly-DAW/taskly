@@ -27,6 +27,10 @@ class SQLAlchemyProjectRepository(ProjectRepository):
         projects = self.db.query(ProjectSQLA).offset(skip).limit(limit).all()
         return [Project.from_dict(p.__dict__) for p in projects]
 
+    def get_all_by_tenant(self, tenant_id: str) -> List[Project]:
+        projects = self.db.query(ProjectSQLA).filter(ProjectSQLA.tenant_id == tenant_id).all()
+        return [Project.from_dict(p.__dict__) for p in projects]
+
     def update(self, project_id: int, project: Project) -> Optional[Project]:
         db_project = self.db.query(ProjectSQLA).filter(ProjectSQLA.id == project_id).first()
         if db_project:
@@ -65,6 +69,10 @@ class SQLAlchemyTaskRepository(TaskRepository):
 
     def get_all(self, skip: int = 0, limit: int = 100) -> List[Task]:
         tasks = self.db.query(TaskSQLA).offset(skip).limit(limit).all()
+        return [Task.from_dict(t.__dict__) for t in tasks]
+
+    def get_by_project_id(self, project_id: int) -> List[Task]:
+        tasks = self.db.query(TaskSQLA).filter(TaskSQLA.project_id == project_id).all()
         return [Task.from_dict(t.__dict__) for t in tasks]
 
     def update(self, task_id: int, task: Task) -> Optional[Task]:

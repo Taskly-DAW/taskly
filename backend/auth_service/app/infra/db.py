@@ -55,6 +55,7 @@ class UserORM(Base):
     __tablename__ = "users"
     id = Column(String, primary_key=True, index=True)
     username = Column(String, index=True)
+    email = Column(String, unique=True, index=True)
     password_hash = Column(String)
     tenant_id = Column(String, index=True)
     roles = relationship("RoleORM", secondary=user_roles, back_populates="users")

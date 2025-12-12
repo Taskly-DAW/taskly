@@ -90,6 +90,7 @@ async def root():
             "/auth/*": "Authentication service",
             "/notifications/*": "Notification service",
             "/tasks/*": "Task management service", # Add task service endpoint
+            "/projects/*": "Project management service",
             "/health": "Health check",
             "/docs": "API documentation"
         }
@@ -207,6 +208,11 @@ async def task_docs_assets(path: str, request: Request):
 async def task_proxy(path: str, request: Request):
     """Proxy requests to task service"""
     return await proxy_request("task_service", path, request)
+
+@app.api_route("/projects/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def projects_proxy(path: str, request: Request):
+    """Proxy requests to task service for projects"""
+    return await proxy_request("task_service", f"projects/{path}", request)
 
 if __name__ == "__main__":
     import uvicorn
