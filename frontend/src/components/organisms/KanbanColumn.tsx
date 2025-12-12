@@ -65,14 +65,6 @@ export const KanbanColumn = ({ id, title, tasks }: KanbanColumnProps) => {
           </div>
         )}
       </Droppable>
-
-      {/* Botão Adicionar */}
-      <Button
-        variant="ghost"
-        className="mt-4 justify-center text-blue-600 hover:text-blue-700"
-      >
-        <Plus className="h-4 w-4 mr-2" /> Adicionar Tarefa
-      </Button>
     </div>
   );
 };

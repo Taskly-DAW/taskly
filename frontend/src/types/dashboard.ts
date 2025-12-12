@@ -15,6 +15,8 @@ export interface DashboardFilters {
   status: string[];
   responsible: string[];
   period: string;
+  projectSearch: string;
+  projectStatus: string[];
 }
 
 export interface DashboardState {
@@ -24,12 +26,34 @@ export interface DashboardState {
   error: string | null;
   filters: DashboardFilters;
   moveTask: (taskId: string, newStatus: string) => void;
-  setFilter: (key: keyof DashboardFilters, value: string) => void;
+  setFilter: (key: keyof DashboardFilters, value: string | string[]) => void;
   fetchProjects: () => Promise<void>;
   fetchTasks: () => Promise<void>;
-  getFilteredTasks: () => Task[]; // Nova função exposta
+  fetchTasksByProject: (projectId: string) => Promise<void>;
+  createTask: (taskData: {
+    title: string;
+    project_id: number;
+    description: string;
+    status: 'todo' | 'doing' | 'block' | 'done';
+    priority: number;
+    completed: boolean;
+  }) => Promise<void>;
+  updateTask: (taskId: string, taskData: {
+    title: string;
+    project_id: number;
+    description: string;
+    status: 'todo' | 'doing' | 'block' | 'done';
+    priority: number;
+    completed: boolean;
+  }) => Promise<void>;
+  updateTaskStatus: (taskId: string, newStatus: string) => Promise<void>;
+  getFilteredTasks: () => Task[];
+  getFilteredProjects: () => Project[];
   createProject: (data: CreateProjectFormData) => Promise<void>;
   updateProject: (projectId: string, data: CreateProjectFormData) => Promise<void>;
   getResponsibleOptions: () => SelectOption[];
   getProjectOptions: () => SelectOption[];
+  users: SelectOption[];
+  fetchUsers: () => Promise<void>;
+  isLoadingUsers: boolean;
 }

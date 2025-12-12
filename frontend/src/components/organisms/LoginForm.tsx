@@ -68,16 +68,16 @@ export const LoginForm = () => {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="username">E-mail</Label>
+            <Label htmlFor="email">E-mail</Label>
             <Input
-              id="username"
+              id="email"
               type="text"
               placeholder="seu@email.com"
-              {...register('username')}
+              {...register('email')}
             />
-            {errors.username && (
+            {errors.email && (
               <span className="text-sm text-red-500">
-                {errors.username.message}
+                {errors.email.message}
               </span>
             )}
           </div>

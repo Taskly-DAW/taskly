@@ -16,7 +16,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Loader2, Save } from 'lucide-react';
-import { CreateProjectSchema, CreateProjectFormData, Project } from '@/schemas/projectSchema';
+import {
+  CreateProjectSchema,
+  CreateProjectFormData,
+  Project,
+} from '@/schemas/projectSchema';
 import { useDashboardStore } from '@/store/dashboardStore';
 import {
   Select,
@@ -35,14 +39,23 @@ interface UpdateProjectModalProps {
   children?: React.ReactNode;
 }
 
-export function UpdateProjectModal({ project, open, onOpenChange, children }: UpdateProjectModalProps) {
+export function UpdateProjectModal({
+  project,
+  open,
+  onOpenChange,
+  children,
+}: UpdateProjectModalProps) {
   const updateProject = useDashboardStore((state) => state.updateProject);
   const fetchUsers = useDashboardStore((state) => state.fetchUsers);
   const users = useDashboardStore((state) => state.users);
   const isLoadingUsers = useDashboardStore((state) => state.isLoadingUsers);
   const error = useDashboardStore((state) => state.error);
-  const getResponsibleOptions = useDashboardStore((state) => state.getResponsibleOptions);
-  const [responsibleOptions, setResponsibleOptions] = useState<SelectOption<string>[]>([]);
+  const getResponsibleOptions = useDashboardStore(
+    (state) => state.getResponsibleOptions,
+  );
+  const [responsibleOptions, setResponsibleOptions] = useState<
+    SelectOption<string>[]
+  >([]);
 
   // Carrega os usuários quando o modal é aberto
   useEffect(() => {
@@ -55,7 +68,9 @@ export function UpdateProjectModal({ project, open, onOpenChange, children }: Up
   useEffect(() => {
     if (users.length > 0) {
       const options = getResponsibleOptions();
-      setResponsibleOptions(options.filter(option => option.value !== 'Todos os Responsáveis'));
+      setResponsibleOptions(
+        options.filter((option) => option.value !== 'Todos os Responsáveis'),
+      );
     }
   }, [users, getResponsibleOptions]);
 
@@ -85,7 +100,7 @@ export function UpdateProjectModal({ project, open, onOpenChange, children }: Up
   }, [open, project, reset]);
 
   const onSubmit = async (data: CreateProjectFormData) => {
-    await updateProject(project.id, data);
+    await updateProject(project.id, { ...data, tenant_id: '' });
     onOpenChange(false);
   };
 
@@ -97,7 +112,8 @@ export function UpdateProjectModal({ project, open, onOpenChange, children }: Up
           <DialogHeader>
             <DialogTitle>Editar Projeto</DialogTitle>
             <DialogDescription>
-              Atualize as informações do projeto. Clique em salvar quando terminar.
+              Atualize as informações do projeto. Clique em salvar quando
+              terminar.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
@@ -122,11 +138,13 @@ export function UpdateProjectModal({ project, open, onOpenChange, children }: Up
               className="min-h-[100px]"
             />
             {errors.description && (
-              <p className="text-sm text-red-500">{errors.description.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.description.message}
+              </p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="responsible">Responsável</Label>
+            <Label htmlFor="responsible_id">Responsável</Label>
             {isLoadingUsers ? (
               <div className="flex items-center justify-center p-4">
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -137,10 +155,10 @@ export function UpdateProjectModal({ project, open, onOpenChange, children }: Up
             ) : (
               <Select
                 onValueChange={(value) => {
-                  const setValue = register('responsible').onChange;
-                  setValue?.({ target: { name: 'responsible', value } } as any);
+                  const setValue = register('responsible_id').onChange;
+                  setValue?.({ target: { name: 'responsible_id', value } } as any);
                 }}
-                defaultValue={project?.responsible?.name || ''}
+                defaultValue={project?.responsible_id?.name || ''}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecione um responsável" />
@@ -150,7 +168,9 @@ export function UpdateProjectModal({ project, open, onOpenChange, children }: Up
                     <SelectItem key={option.value} value={option.value}>
                       <div className="flex items-center gap-2">
                         <Avatar className="h-5 w-5">
-                          <AvatarFallback>{option.label.charAt(0)}</AvatarFallback>
+                          <AvatarFallback>
+                            {option.label.charAt(0)}
+                          </AvatarFallback>
                         </Avatar>
                         <span>{option.label}</span>
                       </div>
@@ -159,8 +179,10 @@ export function UpdateProjectModal({ project, open, onOpenChange, children }: Up
                 </SelectContent>
               </Select>
             )}
-            {errors.responsible && (
-              <p className="text-sm text-red-500">{errors.responsible.message}</p>
+            {errors.responsible_id && (
+              <p className="text-sm text-red-500">
+                {errors.responsible_id.message}
+              </p>
             )}
           </div>
           <DialogFooter>

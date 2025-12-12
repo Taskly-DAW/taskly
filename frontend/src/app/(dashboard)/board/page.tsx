@@ -4,6 +4,9 @@ import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { KanbanColumn } from '@/components/organisms/KanbanColumn';
 import { useDashboardStore } from '@/store/dashboardStore';
 import { useShallow } from 'zustand/react/shallow';
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { AddTaskModal } from '@/components/organisms/AddTaskModal/AddTaskModal';
 
 const COLUMNS = [
   { id: "A Fazer", title: "A Fazer" },
@@ -13,14 +16,34 @@ const COLUMNS = [
 ];
 
 export default function TasksPage() {
-  const { tasks, moveTask } = useDashboardStore(
+  const searchParams = useSearchParams();
+  const projectId = searchParams.get('projectId');
+  
+  const { tasks, moveTask, fetchTasks, fetchTasksByProject, fetchProjects, updateTaskStatus } = useDashboardStore(
     useShallow((state) => ({
       tasks: state.tasks,
       moveTask: state.moveTask,
+      fetchTasks: state.fetchTasks,
+      fetchTasksByProject: state.fetchTasksByProject,
+      fetchProjects: state.fetchProjects,
+      updateTaskStatus: state.updateTaskStatus,
     }))
   );
 
-  const onDragEnd = (result: DropResult) => {
+  useEffect(() => {
+    const loadTasks = async () => {
+      if (projectId) {
+        await fetchProjects(); // Carrega projetos para ter informações
+        await fetchTasksByProject(projectId);
+      } else {
+        await fetchTasks(); // Carrega todas as tasks se não houver projectId
+      }
+    };
+    
+    loadTasks();
+  }, [projectId, fetchTasks, fetchTasksByProject, fetchProjects]);
+
+  const onDragEnd = async (result: DropResult) => {
     const { destination, draggableId } = result;
 
     if (!destination) return;
@@ -31,12 +54,29 @@ export default function TasksPage() {
       return;
     }
 
-    moveTask(draggableId, destination.droppableId);
+    // Atualizar status na API ao mover
+    await updateTaskStatus(draggableId, destination.droppableId);
+  };
+
+  const projectName = tasks.length > 0 ? tasks[0].projectName : 'Todas as Tarefas';
+
+  const handleTaskAdded = () => {
+    // Recarregar as tasks após adicionar uma nova
+    if (projectId) {
+      fetchTasksByProject(projectId);
+    } else {
+      fetchTasks();
+    }
   };
 
   return (
     <div className="p-6 h-full flex flex-col">
-      <h1 className="text-3xl font-bold mb-8 text-gray-900">Minhas Tarefas</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">
+          {projectId ? `Tarefas - ${projectName}` : 'Minhas Tarefas'}
+        </h1>
+        {projectId && <AddTaskModal onTaskAdded={handleTaskAdded} />}
+      </div>
       
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex gap-6 overflow-x-auto h-full pb-4">

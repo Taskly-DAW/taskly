@@ -30,6 +30,7 @@ export default function DashboardPage() {
       filters: state.filters,
       projects: state.projects,
       tasks: state.tasks,
+      isLoading: state.isLoading,
     })),
   );
 
