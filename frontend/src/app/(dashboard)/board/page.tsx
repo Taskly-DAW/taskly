@@ -54,14 +54,12 @@ export default function TasksPage() {
       return;
     }
 
-    // Atualizar status na API ao mover
     await updateTaskStatus(draggableId, destination.droppableId);
   };
 
   const projectName = tasks.length > 0 ? tasks[0].projectName : 'Todas as Tarefas';
 
   const handleTaskAdded = () => {
-    // Recarregar as tasks após adicionar uma nova
     if (projectId) {
       fetchTasksByProject(projectId);
     } else {
@@ -70,7 +68,6 @@ export default function TasksPage() {
   };
 
   const handleTaskUpdated = () => {
-    // Recarregar as tasks após editar uma task
     if (projectId) {
       fetchTasksByProject(projectId);
     } else {

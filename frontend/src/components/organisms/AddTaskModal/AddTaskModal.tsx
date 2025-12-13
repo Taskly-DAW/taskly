@@ -74,7 +74,6 @@ export const AddTaskModal = ({ onTaskAdded }: AddTaskModalProps) => {
         throw new Error('Erro ao criar tarefa');
       }
 
-      // Reset form
       setFormData({
         title: '',
         description: '',
@@ -85,7 +84,6 @@ export const AddTaskModal = ({ onTaskAdded }: AddTaskModalProps) => {
       onTaskAdded?.();
     } catch (error) {
       console.error('Erro ao criar tarefa:', error);
-      // TODO: Adicionar toast de erro
     } finally {
       setIsSubmitting(false);
     }

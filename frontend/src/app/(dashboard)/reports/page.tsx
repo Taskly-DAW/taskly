@@ -35,7 +35,6 @@ export default function ReportsPage() {
     loadData();
   }, [fetchProjects, fetchTasks]);
 
-  // Converter tasks para o formato esperado pelos componentes
   const formattedTasks = useMemo(() => {
     return tasks.map((task) => ({
       nome: task.title,
@@ -66,7 +65,6 @@ export default function ReportsPage() {
     { name: "A Fazer", value: filteredTasks.filter(t => t.status === "A Fazer").length, color: "#6B7280" }
   ];
 
-  // Obter opções únicas para filtros
   const projectOptions = useMemo(() => {
     const uniqueProjects = [...new Set(formattedTasks.map(t => t.projeto))];
     return uniqueProjects.filter(project => project !== 'Desconhecido');
@@ -82,17 +80,14 @@ export default function ReportsPage() {
     return uniqueStatuses;
   }, [formattedTasks]);
 
-  // Função para gerar e baixar relatório em CSV
   const generateReport = () => {
     if (filteredTasks.length === 0) {
       alert('Não há tarefas para gerar o relatório com os filtros selecionados.');
       return;
     }
 
-    // Criar cabeçalho do CSV
     const headers = ['Tarefa', 'Projeto', 'Responsável', 'Vencimento', 'Status'];
     
-    // Criar conteúdo do CSV
     const csvContent = [
       headers.join(','),
       ...filteredTasks.map(task => [
@@ -104,12 +99,10 @@ export default function ReportsPage() {
       ].join(','))
     ].join('\n');
 
-    // Criar blob e download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     
-    // Gerar nome do arquivo com data atual
     const today = new Date().toISOString().split('T')[0];
     const fileName = `relatorio_tarefas_${today}.csv`;
     

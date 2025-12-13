@@ -8,11 +8,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 
 export const Header = () => {
   const handleLogout = () => {
-    // Implementar lógica de logout
     localStorage.removeItem('auth-storage');
     localStorage.removeItem('tenantId');
     
-    // Limpar todos os cookies
     document.cookie.split(";").forEach((c) => {
       document.cookie = c
         .replace(/^ +/, "")

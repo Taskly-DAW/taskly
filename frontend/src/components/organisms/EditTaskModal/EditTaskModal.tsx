@@ -92,13 +92,11 @@ export const EditTaskModal = ({ task, open, onOpenChange, onTaskUpdated }: EditT
     setIsSubmitting(true);
 
     try {
-      // Encontrar o project_id correto
-      let project_id = 1; // valor padrão
+      let project_id = 1;
       
       if (projectId) {
         project_id = parseInt(projectId);
       } else {
-        // Tentar encontrar pelo nome do projeto da task
         const project = projects.find(p => p.name === task.projectName);
         if (project) {
           project_id = parseInt(project.id);
@@ -118,7 +116,6 @@ export const EditTaskModal = ({ task, open, onOpenChange, onTaskUpdated }: EditT
       onTaskUpdated?.();
     } catch (error) {
       console.error('Erro ao atualizar tarefa:', error);
-      // TODO: Adicionar toast de erro
     } finally {
       setIsSubmitting(false);
     }

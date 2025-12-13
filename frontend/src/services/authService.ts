@@ -7,21 +7,16 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
-  // Adicione outros campos conforme necessário
 }
 
 export const authService = {
   getToken: (): string | null => {
-    // Implemente a lógica para obter o token de autenticação
-    // Por exemplo, de localStorage ou de um contexto de autenticação
     const token = localStorage.getItem('auth-storage')
     
     return token ? JSON.parse(token) : null
   },
 
   getTenantId: (): string | null => {
-    // Implemente a lógica para obter o tenantId
-    // Por exemplo, de localStorage ou de um contexto de autenticação
     return localStorage.getItem('tenantId');
   },
 
@@ -49,9 +44,8 @@ export const authService = {
       
       const users: User[] = await response.json();
       
-      // Transforma os usuários em opções para o select
       return users.map(user => ({
-        value: user.id.toString(), // ou user.id, dependendo do que você quer usar como valor
+        value: user.id.toString(),
         label: user.username || user.email,
       }));
     } catch (error) {

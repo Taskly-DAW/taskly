@@ -37,7 +37,6 @@ export function CreateProjectModal() {
   useEffect(() => {
     if (open) {
       const options = getResponsibleOptions();
-      // Remove a opção "Todos os Responsáveis" do array
       setResponsibleOptions(options?.filter(option => option.value !== 'Todos os Responsáveis'));
     }
   }, [open, getResponsibleOptions]);
@@ -98,7 +97,6 @@ export function CreateProjectModal() {
             <Label htmlFor="responsible_id">Responsável</Label>
             <Select
               onValueChange={(value) => {
-                // Atualiza o valor do formulário quando uma opção é selecionada
                 const setValue = register('responsible_id').onChange;
                 setValue?.({ target: { name: 'responsible_id', value } } as any);
               }}

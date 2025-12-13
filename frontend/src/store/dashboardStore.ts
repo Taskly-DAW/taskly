@@ -72,12 +72,10 @@ export const aggregateMonthlyProgress = (
     const project = task.projectName || 'Desconhecido';
 
     if (!monthlyData[month]) {
-      // Inicializa o mês com todos os projetos com contagem 0
       monthlyData[month] = projectNames.reduce(
         (acc, p) => ({ ...acc, [p]: 0 }),
         {},
       );
-      // Adiciona uma chave para tarefas sem projeto definido, se necessário
       if (!monthlyData[month]['Desconhecido']) {
         monthlyData[month]['Desconhecido'] = 0;
       }
@@ -160,7 +158,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
   },
   fetchProjects: async () => {
     set({ isLoading: true, error: null });
-const { tasks, users } = get(); // Obter a lista de usuários
+const { tasks, users } = get();
     
     try {
       const response = await fetch('/api/projects/');
@@ -186,7 +184,7 @@ const { tasks, users } = get(); // Obter a lista de usuários
         status: 'Ativos',
         responsible: {
             name: responsible.label,
-            avatarUrl: '', // Você pode adicionar uma URL de avatar padrão ou buscar do usuário
+            avatarUrl: '',
             id: responsible.value
           },
 
@@ -245,7 +243,7 @@ const { tasks, users } = get(); // Obter a lista de usuários
 
       if (!response.ok) throw new Error('Falha ao atualizar projeto');
 
-      await get().fetchProjects(); // Re-fetch para atualizar a lista
+      await get().fetchProjects();
     } catch (error) {
       console.error(error);
       set({ error: 'Erro ao atualizar projeto' });
@@ -319,16 +317,13 @@ const { tasks, users } = get(); // Obter a lista de usuários
         throw new Error('Erro ao criar tarefa');
       }
 
-      // Recarregar as tasks do projeto atual
       const currentTasks = get().tasks;
       if (currentTasks.length > 0 && currentTasks[0].projectName !== 'Desconhecido') {
-        // Se há tasks de um projeto específico, recarrega apenas do projeto
         const project = get().projects.find(p => p.name === currentTasks[0].projectName);
         if (project) {
           await get().fetchTasksByProject(project.id);
         }
       } else {
-        // Senão, recarrega todas as tasks
         await get().fetchTasks();
       }
     } catch (error) {
@@ -361,16 +356,13 @@ const { tasks, users } = get(); // Obter a lista de usuários
         throw new Error('Erro ao atualizar tarefa');
       }
 
-      // Recarregar as tasks do projeto atual
       const currentTasks = get().tasks;
       if (currentTasks.length > 0 && currentTasks[0].projectName !== 'Desconhecido') {
-        // Se há tasks de um projeto específico, recarrega apenas do projeto
         const project = get().projects.find(p => p.name === currentTasks[0].projectName);
         if (project) {
           await get().fetchTasksByProject(project.id);
         }
       } else {
-        // Senão, recarrega todas as tasks
         await get().fetchTasks();
       }
     } catch (error) {
@@ -382,7 +374,6 @@ const { tasks, users } = get(); // Obter a lista de usuários
   },
 
   updateTaskStatus: async (taskId: string, newStatus: string) => {
-    // Mapear status da UI para API
     const statusMapping: Record<string, 'todo' | 'doing' | 'block' | 'done'> = {
       'A Fazer': 'todo',
       'Em Progresso': 'doing',
@@ -393,11 +384,9 @@ const { tasks, users } = get(); // Obter a lista de usuários
     const apiStatus = statusMapping[newStatus];
     if (!apiStatus) return;
 
-    // Encontrar a task atual
     const currentTask = get().tasks.find(t => t.id === taskId);
     if (!currentTask) return;
 
-    // Encontrar o project_id
     const project = get().projects.find(p => p.name === currentTask.projectName);
     const projectId = project ? parseInt(project.id) : 1;
 
@@ -410,7 +399,7 @@ const { tasks, users } = get(); // Obter a lista de usuários
         body: JSON.stringify({
           title: currentTask.title,
           project_id: projectId,
-          description: '', // Task não tem description no schema atual
+          description: '',
           status: apiStatus,
           priority: 0,
           completed: apiStatus === 'done',
@@ -421,7 +410,6 @@ const { tasks, users } = get(); // Obter a lista de usuários
         throw new Error('Erro ao atualizar status da tarefa');
       }
 
-      // Atualizar localmente para feedback imediato
       get().moveTask(taskId, newStatus);
     } catch (error) {
       console.error('Erro ao atualizar status da tarefa:', error);
@@ -491,14 +479,12 @@ const { tasks, users } = get(); // Obter a lista de usuários
     const { projects, filters } = get();
     
     return projects.filter((project) => {
-      // Filter by search term
       if (filters.projectSearch && 
           !project.name.toLowerCase().includes(filters.projectSearch.toLowerCase()) &&
           !(project.description && project.description.toLowerCase().includes(filters.projectSearch.toLowerCase()))) {
         return false;
       }
       
-      // Filter by status
       if (filters.projectStatus.length > 0 && 
           !filters.projectStatus.includes(project.status)) {
         return false;
