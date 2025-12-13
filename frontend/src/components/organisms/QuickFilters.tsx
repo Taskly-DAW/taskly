@@ -34,7 +34,8 @@ export const QuickFilters = () => {
     getProjectOptions,
     getStatusOptions,
     getResponsibleOptions,
-    fetchProjects,projects
+    fetchProjects,
+    projects,
   } = useDashboardStore(
     useShallow((state) => ({
       filters: state.filters,
@@ -57,7 +58,7 @@ export const QuickFilters = () => {
       responsible: 'Todos os Responsáveis',
     };
     const allLabel = allLabelMap[key];
-    const oldValues = (filters as any)[key] || [];    
+    const oldValues = (filters as any)[key] || [];
 
     if (newValues.length === 0) {
       setFilter(key, [allLabel] as any);

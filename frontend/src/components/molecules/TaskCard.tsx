@@ -53,7 +53,7 @@ export const TaskCard = ({
   onTaskUpdated,
 }: TaskCardProps) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
-  
+
   const initials = responsible.name
     .split(' ')
     .map((n) => n[0])

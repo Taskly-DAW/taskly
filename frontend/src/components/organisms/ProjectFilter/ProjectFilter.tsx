@@ -15,20 +15,27 @@ interface ProjectFilterProps {
 
 const statusOptions = [
   { value: 'Ativos', label: 'Ativos', color: 'bg-green-100 text-green-800' },
-  { value: 'Concluídos', label: 'Concluídos', color: 'bg-blue-100 text-blue-800' },
-  { value: 'Arquivados', label: 'Arquivados', color: 'bg-gray-100 text-gray-800' },
+  {
+    value: 'Concluídos',
+    label: 'Concluídos',
+    color: 'bg-blue-100 text-blue-800',
+  },
+  {
+    value: 'Arquivados',
+    label: 'Arquivados',
+    color: 'bg-gray-100 text-gray-800',
+  },
 ];
 
-export const ProjectFilter = ({ 
-  searchTerm, 
-  onSearchChange, 
-  selectedStatus, 
-  onStatusChange 
+export const ProjectFilter = ({
+  searchTerm,
+  onSearchChange,
+  selectedStatus,
+  onStatusChange,
 }: ProjectFilterProps) => {
-  
   const handleStatusToggle = (status: string) => {
     if (selectedStatus.includes(status)) {
-      onStatusChange(selectedStatus.filter(s => s !== status));
+      onStatusChange(selectedStatus.filter((s) => s !== status));
     } else {
       onStatusChange([...selectedStatus, status]);
     }
@@ -80,7 +87,8 @@ export const ProjectFilter = ({
           <div className="text-sm text-gray-500">
             {searchTerm && `Busca: "${searchTerm}"`}
             {searchTerm && selectedStatus.length > 0 && ' • '}
-            {selectedStatus.length > 0 && `${selectedStatus.length} status selecionado(s)`}
+            {selectedStatus.length > 0 &&
+              `${selectedStatus.length} status selecionado(s)`}
           </div>
           <Button
             variant="ghost"

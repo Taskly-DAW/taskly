@@ -1,7 +1,7 @@
-import { MoreHorizontal, Calendar, User } from "lucide-react";
-import PriorityTag from "./PriorityTag";
-import DateTag from "./DateTag";
-import { Task } from "@/types/tasks";
+import { MoreHorizontal, Calendar, User } from 'lucide-react';
+import PriorityTag from './PriorityTag';
+import DateTag from './DateTag';
+import { Task } from '@/types/tasks';
 
 interface TaskCardProps {
   task: Task;
@@ -11,9 +11,7 @@ export default function TaskCard({ task }: TaskCardProps) {
   return (
     <div className="border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition">
       <div className="flex justify-between items-start mb-2">
-        <h3 className="font-semibold text-gray-900 text-base">
-          {task.title}
-        </h3>
+        <h3 className="font-semibold text-gray-900 text-base">{task.title}</h3>
 
         <MoreHorizontal size={20} className="text-gray-500 cursor-pointer" />
       </div>

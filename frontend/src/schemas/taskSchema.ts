@@ -35,16 +35,16 @@ export const ResponsibleSchema = z.object({
 });
 
 export const TaskStatusSchema = z.enum([
-  'A Fazer', 
-  'Concluídas', 
-  'Em Andamento', 
-  'Atrasadas'
+  'A Fazer',
+  'Concluídas',
+  'Em Andamento',
+  'Atrasadas',
 ]);
 
 export const TaskSchema = z.object({
   id: z.string(),
   title: z.string().min(1, 'Título é obrigatório'),
-  status: TaskStatusSchema, 
+  status: TaskStatusSchema,
   priority: z.enum(['Alta', 'Média', 'Baixa']),
   projectName: z.enum(['TaskFlow MVP', 'Onboarding', 'Documentação', 'Outros']),
   project_id: z.string(),

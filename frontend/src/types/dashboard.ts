@@ -3,7 +3,11 @@ import {
   StatusDistributionData,
 } from '@/schemas/chartSchema';
 import { Task } from '@/schemas/taskSchema';
-import { CreateProjectFormData, Project, ProjectUiSchema } from '@/schemas/projectSchema';
+import {
+  CreateProjectFormData,
+  Project,
+  ProjectUiSchema,
+} from '@/schemas/projectSchema';
 
 export interface SelectOption<T = string> {
   label: string;
@@ -38,19 +42,25 @@ export interface DashboardState {
     priority: number;
     completed: boolean;
   }) => Promise<void>;
-  updateTask: (taskId: string, taskData: {
-    title: string;
-    project_id: number;
-    description: string;
-    status: 'todo' | 'doing' | 'block' | 'done';
-    priority: number;
-    completed: boolean;
-  }) => Promise<void>;
+  updateTask: (
+    taskId: string,
+    taskData: {
+      title: string;
+      project_id: number;
+      description: string;
+      status: 'todo' | 'doing' | 'block' | 'done';
+      priority: number;
+      completed: boolean;
+    },
+  ) => Promise<void>;
   updateTaskStatus: (taskId: string, newStatus: string) => Promise<void>;
   getFilteredTasks: () => Task[];
   getFilteredProjects: () => Project[];
   createProject: (data: CreateProjectFormData) => Promise<void>;
-  updateProject: (projectId: string, data: CreateProjectFormData) => Promise<void>;
+  updateProject: (
+    projectId: string,
+    data: CreateProjectFormData,
+  ) => Promise<void>;
   getResponsibleOptions: () => SelectOption[];
   getProjectOptions: () => SelectOption[];
   users: SelectOption[];

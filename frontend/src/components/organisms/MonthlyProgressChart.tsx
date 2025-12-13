@@ -27,14 +27,21 @@ const generateColorFromString = (str: string): string => {
   return `hsl(${hash % 360}, 70%, 50%)`;
 };
 
-export const MonthlyProgressChart = ({ tasks, filters, projects }: DashboardState) => {
+export const MonthlyProgressChart = ({
+  tasks,
+  filters,
+  projects,
+}: DashboardState) => {
   const data = React.useMemo(() => {
     return aggregateMonthlyProgress(tasks, projects);
   }, [tasks, projects]);
 
   const projectsToDisplay = React.useMemo(() => {
     const allProjectNames = projects?.map((p) => p.name);
-    if (filters?.projects?.includes('Todos os Projetos') || !filters?.projects) {
+    if (
+      filters?.projects?.includes('Todos os Projetos') ||
+      !filters?.projects
+    ) {
       return allProjectNames;
     }
     return filters.projects.filter((p) => p !== 'Todos os Projetos');

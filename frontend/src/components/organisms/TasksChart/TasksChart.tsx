@@ -1,15 +1,25 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import ChartSwitcher from "@/components/molecules/ChartSwitcher";
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import ChartSwitcher from '@/components/molecules/ChartSwitcher';
 
 import {
   ResponsiveContainer,
-  BarChart, Bar,
-  LineChart as LineChartRechart, Line,
-  PieChart as PieChartRechart, Pie,
-  XAxis, YAxis, Tooltip, Cell
-} from "recharts";
+  BarChart,
+  Bar,
+  LineChart as LineChartRechart,
+  Line,
+  PieChart as PieChartRechart,
+  Pie,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Cell,
+} from 'recharts';
 
-export default function TasksChart({ chartType, setChartType, chartData }: any) {
+export default function TasksChart({
+  chartType,
+  setChartType,
+  chartData,
+}: any) {
   return (
     <Card className="mb-10 shadow-sm">
       <CardHeader className="flex justify-between">
@@ -18,8 +28,7 @@ export default function TasksChart({ chartType, setChartType, chartData }: any) 
       </CardHeader>
 
       <CardContent className="h-80">
-
-        {chartType === "bar" && (
+        {chartType === 'bar' && (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
               <XAxis dataKey="name" />
@@ -34,7 +43,7 @@ export default function TasksChart({ chartType, setChartType, chartData }: any) 
           </ResponsiveContainer>
         )}
 
-        {chartType === "line" && (
+        {chartType === 'line' && (
           <ResponsiveContainer width="100%" height="100%">
             <LineChartRechart data={chartData}>
               <XAxis dataKey="name" />
@@ -45,7 +54,7 @@ export default function TasksChart({ chartType, setChartType, chartData }: any) 
           </ResponsiveContainer>
         )}
 
-        {chartType === "pie" && (
+        {chartType === 'pie' && (
           <ResponsiveContainer>
             <PieChartRechart>
               <Pie data={chartData} dataKey="value" outerRadius={100} label>
@@ -56,7 +65,6 @@ export default function TasksChart({ chartType, setChartType, chartData }: any) 
             </PieChartRechart>
           </ResponsiveContainer>
         )}
-
       </CardContent>
     </Card>
   );

@@ -1,4 +1,4 @@
-import StatusBadge from "../atoms/StatusBadge";
+import StatusBadge from '../atoms/StatusBadge';
 
 export default function TasksTable({ tasks }: any) {
   return (
@@ -20,7 +20,9 @@ export default function TasksTable({ tasks }: any) {
             <td>{task.projeto}</td>
             <td>{task.usuario}</td>
             <td>{task.vencimento}</td>
-            <td><StatusBadge status={task.status} /></td>
+            <td>
+              <StatusBadge status={task.status} />
+            </td>
           </tr>
         ))}
       </tbody>

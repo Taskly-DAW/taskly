@@ -42,7 +42,9 @@ const getStatusColor = (status: string) => {
 };
 
 export const ProjectCards = ({ projects }: ProjectCardsProps) => {
-  const [editingProject, setEditingProject] = React.useState<Project | null>(null);
+  const [editingProject, setEditingProject] = React.useState<Project | null>(
+    null,
+  );
   const router = useRouter();
 
   const handleProjectClick = (projectId: string) => {
@@ -62,8 +64,8 @@ export const ProjectCards = ({ projects }: ProjectCardsProps) => {
               }
             }}
           />
-          
-          <Card 
+
+          <Card
             className="hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
             onClick={() => handleProjectClick(project.id)}
           >
@@ -74,8 +76,8 @@ export const ProjectCards = ({ projects }: ProjectCardsProps) => {
                 </Badge>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       className="h-8 w-8 p-0"
                       onClick={(e) => e.stopPropagation()}
                     >
@@ -91,7 +93,7 @@ export const ProjectCards = ({ projects }: ProjectCardsProps) => {
                     >
                       Ver Tarefas
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
                         setEditingProject(project);
@@ -109,14 +111,14 @@ export const ProjectCards = ({ projects }: ProjectCardsProps) => {
                 {project.name}
               </CardTitle>
             </CardHeader>
-            
+
             <CardContent className="space-y-4">
               {project.description && (
                 <p className="text-sm text-gray-600 line-clamp-2">
                   {project.description}
                 </p>
               )}
-              
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">Progresso</span>
@@ -124,7 +126,7 @@ export const ProjectCards = ({ projects }: ProjectCardsProps) => {
                 </div>
                 <Progress value={project.progress} className="h-2" />
               </div>
-              
+
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <User className="h-4 w-4" />
@@ -141,7 +143,7 @@ export const ProjectCards = ({ projects }: ProjectCardsProps) => {
                     <span>{project.responsible.name}</span>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="h-4 w-4" />
                   <span>{formatDate(project.dueDate)}</span>

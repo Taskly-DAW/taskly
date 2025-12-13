@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useState, useMemo, useEffect } from "react";
-import ReportFiltersCard from "@/components/organisms/ReportFiltersCard/ReportFiltersCard";
-import TasksChart from "@/components/organisms/TasksChart/TasksChart";
-import MetricsGrid from "@/components/organisms/MetricsGrid/MetricsGrid";
-import TasksTable from "@/components/molecules/TasksTable";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useState, useMemo, useEffect } from 'react';
+import ReportFiltersCard from '@/components/organisms/ReportFiltersCard/ReportFiltersCard';
+import TasksChart from '@/components/organisms/TasksChart/TasksChart';
+import MetricsGrid from '@/components/organisms/MetricsGrid/MetricsGrid';
+import TasksTable from '@/components/molecules/TasksTable';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useDashboardStore } from '@/store/dashboardStore';
 import { useShallow } from 'zustand/react/shallow';
 
 export default function ReportsPage() {
-  const [chartType, setChartType] = useState("bar");
+  const [chartType, setChartType] = useState('bar');
 
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [projectFilter, setProjectFilter] = useState("all");
-  const [userFilter, setUserFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [projectFilter, setProjectFilter] = useState('all');
+  const [userFilter, setUserFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const { tasks, projects, fetchTasks, fetchProjects } = useDashboardStore(
     useShallow((state) => ({
@@ -24,7 +24,7 @@ export default function ReportsPage() {
       projects: state.projects,
       fetchTasks: state.fetchTasks,
       fetchProjects: state.fetchProjects,
-    }))
+    })),
   );
 
   useEffect(() => {
@@ -35,7 +35,6 @@ export default function ReportsPage() {
     loadData();
   }, [fetchProjects, fetchTasks]);
 
-  // Converter tasks para o formato esperado pelos componentes
   const formattedTasks = useMemo(() => {
     return tasks.map((task) => ({
       nome: task.title,
@@ -48,71 +47,105 @@ export default function ReportsPage() {
 
   const filteredTasks = useMemo(() => {
     return formattedTasks.filter((t) => {
-      const withinStart = startDate ? new Date(t.vencimento) >= new Date(startDate) : true;
-      const withinEnd = endDate ? new Date(t.vencimento) <= new Date(endDate) : true;
+      const withinStart = startDate
+        ? new Date(t.vencimento) >= new Date(startDate)
+        : true;
+      const withinEnd = endDate
+        ? new Date(t.vencimento) <= new Date(endDate)
+        : true;
 
-      const matchProject = projectFilter === "all" || t.projeto === projectFilter;
-      const matchUser = userFilter === "all" || t.usuario === userFilter;
-      const matchStatus = statusFilter === "all" || t.status === statusFilter;
+      const matchProject =
+        projectFilter === 'all' || t.projeto === projectFilter;
+      const matchUser = userFilter === 'all' || t.usuario === userFilter;
+      const matchStatus = statusFilter === 'all' || t.status === statusFilter;
 
-      return withinStart && withinEnd && matchProject && matchUser && matchStatus;
+      return (
+        withinStart && withinEnd && matchProject && matchUser && matchStatus
+      );
     });
-  }, [formattedTasks, startDate, endDate, projectFilter, userFilter, statusFilter]);
+  }, [
+    formattedTasks,
+    startDate,
+    endDate,
+    projectFilter,
+    userFilter,
+    statusFilter,
+  ]);
 
   const chartData = [
-    { name: "Concluído", value: filteredTasks.filter(t => t.status === "Concluído").length, color: "#22C55E" },
-    { name: "Em Progresso", value: filteredTasks.filter(t => t.status === "Em Progresso").length, color: "#3B82F6" },
-    { name: "Bloqueadas", value: filteredTasks.filter(t => t.status === "Bloqueadas").length, color: "#EF4444" },
-    { name: "A Fazer", value: filteredTasks.filter(t => t.status === "A Fazer").length, color: "#6B7280" }
+    {
+      name: 'Concluído',
+      value: filteredTasks.filter((t) => t.status === 'Concluído').length,
+      color: '#22C55E',
+    },
+    {
+      name: 'Em Progresso',
+      value: filteredTasks.filter((t) => t.status === 'Em Progresso').length,
+      color: '#3B82F6',
+    },
+    {
+      name: 'Bloqueadas',
+      value: filteredTasks.filter((t) => t.status === 'Bloqueadas').length,
+      color: '#EF4444',
+    },
+    {
+      name: 'A Fazer',
+      value: filteredTasks.filter((t) => t.status === 'A Fazer').length,
+      color: '#6B7280',
+    },
   ];
 
-  // Obter opções únicas para filtros
   const projectOptions = useMemo(() => {
-    const uniqueProjects = [...new Set(formattedTasks.map(t => t.projeto))];
-    return uniqueProjects.filter(project => project !== 'Desconhecido');
+    const uniqueProjects = [...new Set(formattedTasks.map((t) => t.projeto))];
+    return uniqueProjects.filter((project) => project !== 'Desconhecido');
   }, [formattedTasks]);
 
   const userOptions = useMemo(() => {
-    const uniqueUsers = [...new Set(formattedTasks.map(t => t.usuario))];
+    const uniqueUsers = [...new Set(formattedTasks.map((t) => t.usuario))];
     return uniqueUsers;
   }, [formattedTasks]);
 
   const statusOptions = useMemo(() => {
-    const uniqueStatuses = [...new Set(formattedTasks.map(t => t.status))];
+    const uniqueStatuses = [...new Set(formattedTasks.map((t) => t.status))];
     return uniqueStatuses;
   }, [formattedTasks]);
 
-  // Função para gerar e baixar relatório em CSV
   const generateReport = () => {
     if (filteredTasks.length === 0) {
-      alert('Não há tarefas para gerar o relatório com os filtros selecionados.');
+      alert(
+        'Não há tarefas para gerar o relatório com os filtros selecionados.',
+      );
       return;
     }
 
-    // Criar cabeçalho do CSV
-    const headers = ['Tarefa', 'Projeto', 'Responsável', 'Vencimento', 'Status'];
-    
-    // Criar conteúdo do CSV
+    const headers = [
+      'Tarefa',
+      'Projeto',
+      'Responsável',
+      'Vencimento',
+      'Status',
+    ];
+
     const csvContent = [
       headers.join(','),
-      ...filteredTasks.map(task => [
-        `"${task.nome}"`,
-        `"${task.projeto}"`,
-        `"${task.usuario}"`,
-        `"${task.vencimento}"`,
-        `"${task.status}"`
-      ].join(','))
+      ...filteredTasks.map((task) =>
+        [
+          `"${task.nome}"`,
+          `"${task.projeto}"`,
+          `"${task.usuario}"`,
+          `"${task.vencimento}"`,
+          `"${task.status}"`,
+        ].join(','),
+      ),
     ].join('\n');
 
-    // Criar blob e download
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
-    // Gerar nome do arquivo com data atual
+
     const today = new Date().toISOString().split('T')[0];
     const fileName = `relatorio_tarefas_${today}.csv`;
-    
+
     link.setAttribute('href', url);
     link.setAttribute('download', fileName);
     link.style.visibility = 'hidden';
@@ -128,8 +161,8 @@ export default function ReportsPage() {
       <ReportFiltersCard
         startDate={startDate}
         endDate={endDate}
-        onStart={(e:any)=>setStartDate(e.target.value)}
-        onEnd={(e:any)=>setEndDate(e.target.value)}
+        onStart={(e: any) => setStartDate(e.target.value)}
+        onEnd={(e: any) => setEndDate(e.target.value)}
         setProjectFilter={setProjectFilter}
         setUserFilter={setUserFilter}
         setStatusFilter={setStatusFilter}
@@ -138,11 +171,11 @@ export default function ReportsPage() {
         statusOptions={statusOptions}
         generateReport={generateReport}
         resetFilters={() => {
-          setStartDate("");
-          setEndDate("");
-          setProjectFilter("all");
-          setUserFilter("all");
-          setStatusFilter("all");
+          setStartDate('');
+          setEndDate('');
+          setProjectFilter('all');
+          setUserFilter('all');
+          setStatusFilter('all');
         }}
       />
 
@@ -156,7 +189,9 @@ export default function ReportsPage() {
 
       <Card className="shadow-sm mb-10">
         <CardHeader>
-          <CardTitle>Tarefas Correspondentes ({filteredTasks.length})</CardTitle>
+          <CardTitle>
+            Tarefas Correspondentes ({filteredTasks.length})
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <TasksTable tasks={filteredTasks} />

@@ -1,12 +1,11 @@
 import { z } from 'zod';
 
-// 1. Schema do que vem EXATAMENTE da sua API (Backend)
 export const ProjectApiSchema = z.object({
-  id: z.number(), // A API retorna number
+  id: z.number(),
   name: z.string(),
   description: z.string().nullable().optional(),
-  created_at: z.string(), // Vem como string ISO
-  responsible_id: z.string().nullable().optional(), // Vem como string ISO
+  created_at: z.string(),
+  responsible_id: z.string().nullable().optional(),
   updated_at: z.string().nullable().optional(),
 });
 
@@ -24,9 +23,9 @@ export const ProjectUiSchema = z.object({
 });
 
 export const CreateProjectSchema = z.object({
-  name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres"),
+  name: z.string().min(3, 'O nome deve ter pelo menos 3 caracteres'),
   description: z.string().optional(),
-  responsible_id: z.string().min(1, "Por favor, selecione um responsável")
+  responsible_id: z.string().min(1, 'Por favor, selecione um responsável'),
 });
 
 export type ProjectApi = z.infer<typeof ProjectApiSchema>;

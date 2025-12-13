@@ -1,4 +1,10 @@
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 
 export default function SelectBox({ placeholder, items, onChange }: any) {
   return (
@@ -10,7 +16,9 @@ export default function SelectBox({ placeholder, items, onChange }: any) {
       <SelectContent>
         <SelectItem value="all">Todos</SelectItem>
         {items.map((item: string) => (
-          <SelectItem key={item} value={item}>{item}</SelectItem>
+          <SelectItem key={item} value={item}>
+            {item}
+          </SelectItem>
         ))}
       </SelectContent>
     </Select>

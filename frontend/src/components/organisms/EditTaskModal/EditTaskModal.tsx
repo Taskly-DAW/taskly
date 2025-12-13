@@ -41,36 +41,45 @@ const statusOptions = [
 const statusMapping: Record<string, 'todo' | 'doing' | 'block' | 'done'> = {
   'A Fazer': 'todo',
   'Em Progresso': 'doing',
-  'Bloqueadas': 'block',
-  'Concluído': 'done',
+  Bloqueadas: 'block',
+  Concluído: 'done',
 };
 
-const reverseStatusMapping: Record<'todo' | 'doing' | 'block' | 'done', string> = {
-  'todo': 'A Fazer',
-  'doing': 'Em Progresso',
-  'block': 'Bloqueadas',
-  'done': 'Concluído',
+const reverseStatusMapping: Record<
+  'todo' | 'doing' | 'block' | 'done',
+  string
+> = {
+  todo: 'A Fazer',
+  doing: 'Em Progresso',
+  block: 'Bloqueadas',
+  done: 'Concluído',
 };
 
-export const EditTaskModal = ({ task, open, onOpenChange, onTaskUpdated }: EditTaskModalProps) => {
+export const EditTaskModal = ({
+  task,
+  open,
+  onOpenChange,
+  onTaskUpdated,
+}: EditTaskModalProps) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     status: 'todo' as 'todo' | 'doing' | 'block' | 'done',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
-  
-  const { updateTask, fetchTasksByProject, fetchTasks, projects } = useDashboardStore(
-    useShallow((state) => ({
-      updateTask: state.updateTask,
-      fetchTasksByProject: state.fetchTasksByProject,
-      fetchTasks: state.fetchTasks,
-      projects: state.projects,
-    }))
-  );
+
+  const { updateTask, fetchTasksByProject, fetchTasks, projects } =
+    useDashboardStore(
+      useShallow((state) => ({
+        updateTask: state.updateTask,
+        fetchTasksByProject: state.fetchTasksByProject,
+        fetchTasks: state.fetchTasks,
+        projects: state.projects,
+      })),
+    );
 
   useEffect(() => {
     if (task && open) {
@@ -84,7 +93,7 @@ export const EditTaskModal = ({ task, open, onOpenChange, onTaskUpdated }: EditT
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim() || !task) {
       return;
     }
@@ -92,14 +101,12 @@ export const EditTaskModal = ({ task, open, onOpenChange, onTaskUpdated }: EditT
     setIsSubmitting(true);
 
     try {
-      // Encontrar o project_id correto
-      let project_id = 1; // valor padrão
-      
+      let project_id = 1;
+
       if (projectId) {
         project_id = parseInt(projectId);
       } else {
-        // Tentar encontrar pelo nome do projeto da task
-        const project = projects.find(p => p.name === task.projectName);
+        const project = projects.find((p) => p.name === task.projectName);
         if (project) {
           project_id = parseInt(project.id);
         }
@@ -118,14 +125,13 @@ export const EditTaskModal = ({ task, open, onOpenChange, onTaskUpdated }: EditT
       onTaskUpdated?.();
     } catch (error) {
       console.error('Erro ao atualizar tarefa:', error);
-      // TODO: Adicionar toast de erro
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -164,7 +170,7 @@ export const EditTaskModal = ({ task, open, onOpenChange, onTaskUpdated }: EditT
             <Label htmlFor="status">Status *</Label>
             <Select
               value={formData.status}
-              onValueChange={(value: 'todo' | 'doing' | 'block' | 'done') => 
+              onValueChange={(value: 'todo' | 'doing' | 'block' | 'done') =>
                 handleInputChange('status', value)
               }
             >

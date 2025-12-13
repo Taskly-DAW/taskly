@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { LoginFormValues, RegisterFormValues } from '@/schemas/authSchema';
-import Cookies from 'js-cookie'; // <--- Importe isso
+import Cookies from 'js-cookie';
 
 interface AuthResponse {
   access_token: string;

@@ -7,7 +7,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-6">
           <Link href="/" className="flex items-center gap-2 text-blue-600">
-             <svg
+            <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"

@@ -17,7 +17,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, Loader2 } from 'lucide-react';
-import { CreateProjectSchema, CreateProjectFormData } from '@/schemas/projectSchema';
+import {
+  CreateProjectSchema,
+  CreateProjectFormData,
+} from '@/schemas/projectSchema';
 import { useDashboardStore } from '@/store/dashboardStore';
 import {
   Select,
@@ -31,14 +34,19 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 export function CreateProjectModal() {
   const [open, setOpen] = useState(false);
   const createProject = useDashboardStore((state) => state.createProject);
-  const getResponsibleOptions = useDashboardStore((state) => state.getResponsibleOptions);
-  const [responsibleOptions, setResponsibleOptions] = useState<{label: string, value: string}[]>([]);
+  const getResponsibleOptions = useDashboardStore(
+    (state) => state.getResponsibleOptions,
+  );
+  const [responsibleOptions, setResponsibleOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
 
   useEffect(() => {
     if (open) {
       const options = getResponsibleOptions();
-      // Remove a opção "Todos os Responsáveis" do array
-      setResponsibleOptions(options?.filter(option => option.value !== 'Todos os Responsáveis'));
+      setResponsibleOptions(
+        options?.filter((option) => option.value !== 'Todos os Responsáveis'),
+      );
     }
   }, [open, getResponsibleOptions]);
 
@@ -98,9 +106,10 @@ export function CreateProjectModal() {
             <Label htmlFor="responsible_id">Responsável</Label>
             <Select
               onValueChange={(value) => {
-                // Atualiza o valor do formulário quando uma opção é selecionada
                 const setValue = register('responsible_id').onChange;
-                setValue?.({ target: { name: 'responsible_id', value } } as any);
+                setValue?.({
+                  target: { name: 'responsible_id', value },
+                } as any);
               }}
               defaultValue=""
             >
@@ -112,7 +121,9 @@ export function CreateProjectModal() {
                   <SelectItem key={option.value} value={option.value}>
                     <div className="flex items-center gap-2">
                       <Avatar className="h-5 w-5">
-                        <AvatarFallback>{option.label.charAt(0)}</AvatarFallback>
+                        <AvatarFallback>
+                          {option.label.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
                       <span>{option.label}</span>
                     </div>
@@ -121,14 +132,16 @@ export function CreateProjectModal() {
               </SelectContent>
             </Select>
             {errors.responsible_id && (
-              <p className="text-sm text-red-500">{errors.responsible_id.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.responsible_id.message}
+              </p>
             )}
           </div>
 
           <DialogFooter>
-            <Button 
-              type="button" 
-              variant="outline" 
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => setOpen(false)}
             >
               Cancelar

@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
-import FiltersRow from "@/components/molecules/FiltersRow";
+import { Card, CardContent } from '@/components/ui/card';
+import FiltersRow from '@/components/molecules/FiltersRow';
 
 export default function ReportFiltersCard(props: any) {
   return (

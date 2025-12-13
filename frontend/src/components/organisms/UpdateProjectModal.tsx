@@ -1,5 +1,3 @@
-// UpdateProjectModal.tsx - Atualizando para lidar com carregamento assíncrono
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -57,14 +55,12 @@ export function UpdateProjectModal({
     SelectOption<string>[]
   >([]);
 
-  // Carrega os usuários quando o modal é aberto
   useEffect(() => {
     if (open) {
       fetchUsers();
     }
   }, [open, fetchUsers]);
 
-  // Atualiza as opções de responsáveis quando os usuários são carregados
   useEffect(() => {
     if (users.length > 0) {
       const options = getResponsibleOptions();
@@ -88,7 +84,6 @@ export function UpdateProjectModal({
     },
   });
 
-  // Atualiza os valores do formulário quando o projeto ou o modal é aberto
   useEffect(() => {
     if (open && project) {
       reset({
@@ -156,7 +151,9 @@ export function UpdateProjectModal({
               <Select
                 onValueChange={(value) => {
                   const setValue = register('responsible_id').onChange;
-                  setValue?.({ target: { name: 'responsible_id', value } } as any);
+                  setValue?.({
+                    target: { name: 'responsible_id', value },
+                  } as any);
                 }}
                 defaultValue={project?.responsible_id?.name || ''}
               >
