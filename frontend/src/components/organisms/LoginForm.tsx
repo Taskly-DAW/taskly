@@ -39,7 +39,6 @@ export const LoginForm = () => {
     setLocalError(null);
     console.log(data);
     try {
-        
       await login({ ...data, tenant_id: '' });
       router.push('/');
     } catch (err: any) {

@@ -30,7 +30,11 @@ export const MetricCard = ({
       </CardHeader>
 
       <CardContent>
-        <MetricValue value={value} percentage={percentage} isInverter={isInverter}/>
+        <MetricValue
+          value={value}
+          percentage={percentage}
+          isInverter={isInverter}
+        />
       </CardContent>
     </Card>
   );

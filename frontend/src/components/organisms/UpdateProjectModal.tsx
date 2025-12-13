@@ -151,7 +151,9 @@ export function UpdateProjectModal({
               <Select
                 onValueChange={(value) => {
                   const setValue = register('responsible_id').onChange;
-                  setValue?.({ target: { name: 'responsible_id', value } } as any);
+                  setValue?.({
+                    target: { name: 'responsible_id', value },
+                  } as any);
                 }}
                 defaultValue={project?.responsible_id?.name || ''}
               >

@@ -11,16 +11,16 @@ import { CreateProjectModal } from '@/components/organisms/CreateProjectModal';
 import { Card } from '@/components/ui/card';
 
 export default function TasksPage() {
-  const { 
-    projects, 
-    isLoading, 
-    error, 
-    fetchTasks, 
-    fetchUsers, 
+  const {
+    projects,
+    isLoading,
+    error,
+    fetchTasks,
+    fetchUsers,
     fetchProjects,
     getFilteredProjects,
     filters,
-    setFilter
+    setFilter,
   } = useDashboardStore(
     useShallow((state: DashboardState) => ({
       projects: state.projects,
@@ -47,7 +47,7 @@ export default function TasksPage() {
         console.error('Erro ao carregar dados:', error);
       }
     };
-    
+
     loadData();
   }, [fetchUsers, fetchProjects, fetchTasks]);
 
@@ -62,12 +62,14 @@ export default function TasksPage() {
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6 text-gray-900">Projetos</h1>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Filtros */}
         <div className="lg:col-span-1">
           <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4 text-gray-900">Filtros</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-900">
+              Filtros
+            </h2>
             <ProjectFilter
               searchTerm={filters.projectSearch}
               onSearchChange={(value) => setFilter('projectSearch', value)}
@@ -89,11 +91,13 @@ export default function TasksPage() {
               <CreateProjectModal />
             </div>
           </div>
-          
+
           {filteredProjects.length === 0 ? (
             <Card className="p-12 text-center">
               <div className="text-gray-500">
-                <h3 className="text-lg font-medium mb-2">Nenhum projeto encontrado</h3>
+                <h3 className="text-lg font-medium mb-2">
+                  Nenhum projeto encontrado
+                </h3>
                 <p>Tente ajustar os filtros ou criar um novo projeto.</p>
               </div>
             </Card>

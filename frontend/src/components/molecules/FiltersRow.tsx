@@ -1,21 +1,27 @@
-import { Button } from "@/components/ui/button";
-import DateInput from "../atoms/DateInput";
-import SelectBox from "../atoms/SelectBox";
-import { RotateCcw, DownloadIcon } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import DateInput from '../atoms/DateInput';
+import SelectBox from '../atoms/SelectBox';
+import { RotateCcw, DownloadIcon } from 'lucide-react';
 
 export default function FiltersRow({
-  startDate, endDate,
-  onStart, onEnd,
-  projectFilter, userFilter, statusFilter,
-  setProjectFilter, setUserFilter, setStatusFilter,
-  projectOptions, userOptions, statusOptions,
+  startDate,
+  endDate,
+  onStart,
+  onEnd,
+  projectFilter,
+  userFilter,
+  statusFilter,
+  setProjectFilter,
+  setUserFilter,
+  setStatusFilter,
+  projectOptions,
+  userOptions,
+  statusOptions,
   generateReport,
-  resetFilters
+  resetFilters,
 }: any) {
-
   return (
     <div className="flex flex-wrap items-end gap-6">
-
       {/* INICIO */}
       <div className="flex flex-col">
         <p className="font-medium mb-1">Início</p>
@@ -33,7 +39,14 @@ export default function FiltersRow({
         <p className="font-medium mb-1">Projeto</p>
         <SelectBox
           placeholder="Todos os Projetos"
-          items={projectOptions || ["Projeto Alpha", "Projeto Beta", "Projeto Gamma", "Projeto Delta"]}
+          items={
+            projectOptions || [
+              'Projeto Alpha',
+              'Projeto Beta',
+              'Projeto Gamma',
+              'Projeto Delta',
+            ]
+          }
           onChange={setProjectFilter}
         />
       </div>
@@ -43,7 +56,15 @@ export default function FiltersRow({
         <p className="font-medium mb-1">Usuário</p>
         <SelectBox
           placeholder="Todos os Usuários"
-          items={userOptions || ["João Silva","Maria Oliveira","Pedro Souza","Ana Lima","Carlos Alberto"]}
+          items={
+            userOptions || [
+              'João Silva',
+              'Maria Oliveira',
+              'Pedro Souza',
+              'Ana Lima',
+              'Carlos Alberto',
+            ]
+          }
           onChange={setUserFilter}
         />
       </div>
@@ -53,21 +74,30 @@ export default function FiltersRow({
         <p className="font-medium mb-1">Status</p>
         <SelectBox
           placeholder="Todos os Status"
-          items={statusOptions || ["Concluído","Em Progresso","Atrasado","Não Iniciado"]}
+          items={
+            statusOptions || [
+              'Concluído',
+              'Em Progresso',
+              'Atrasado',
+              'Não Iniciado',
+            ]
+          }
           onChange={setStatusFilter}
         />
       </div>
 
       {/* BOTOES */}
       <div className="flex items-center gap-3 pb-1">
-        <Button className="bg-blue-600 hover:bg-blue-700" onClick={generateReport}>
+        <Button
+          className="bg-blue-600 hover:bg-blue-700"
+          onClick={generateReport}
+        >
           Gerar Relatório <DownloadIcon className="w-4 h-4" />
         </Button>
         <Button variant="outline" onClick={resetFilters}>
           <RotateCcw className="w-4 h-4" />
         </Button>
       </div>
-
     </div>
   );
 }

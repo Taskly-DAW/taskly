@@ -48,8 +48,14 @@ export const ProjectTable = ({ projects }: ProjectTableProps) => {
     let sortableItems = [...projects];
     if (sortConfig !== null) {
       sortableItems.sort((a, b) => {
-        const aValue = sortConfig.key === 'responsible' ? a.responsible.name : a[sortConfig.key];
-        const bValue = sortConfig.key === 'responsible' ? b.responsible.name : b[sortConfig.key];
+        const aValue =
+          sortConfig.key === 'responsible'
+            ? a.responsible.name
+            : a[sortConfig.key];
+        const bValue =
+          sortConfig.key === 'responsible'
+            ? b.responsible.name
+            : b[sortConfig.key];
 
         if (aValue < bValue) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
@@ -65,7 +71,11 @@ export const ProjectTable = ({ projects }: ProjectTableProps) => {
 
   const requestSort = (key: SortableProjectKeys) => {
     let direction: SortDirection = 'ascending';
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === 'ascending'
+    ) {
       direction = 'descending';
     }
     setSortConfig({ key, direction });
@@ -90,35 +100,53 @@ export const ProjectTable = ({ projects }: ProjectTableProps) => {
         <TableHeader className="bg-gray-50">
           <TableRow>
             <TableHead className="text-gray-700 w-[300px] p-3">
-  <Button className='px-0 has-[>svg]:px-0' variant="ghost" onClick={() => requestSort('name')}>
-    Nome do Projeto
-    {getSortIcon('name')}
-  </Button>
-</TableHead>
+              <Button
+                className="px-0 has-[>svg]:px-0"
+                variant="ghost"
+                onClick={() => requestSort('name')}
+              >
+                Nome do Projeto
+                {getSortIcon('name')}
+              </Button>
+            </TableHead>
             <TableHead className="text-gray-700 w-[200px]">
-  <Button className='px-0 has-[>svg]:px-0' variant="ghost" onClick={() => requestSort('responsible')}>
-    Responsável
-    {getSortIcon('responsible')}
-  </Button>
-</TableHead>
+              <Button
+                className="px-0 has-[>svg]:px-0"
+                variant="ghost"
+                onClick={() => requestSort('responsible')}
+              >
+                Responsável
+                {getSortIcon('responsible')}
+              </Button>
+            </TableHead>
             <TableHead className="text-gray-700 w-[200px]">
-  <Button className='px-0 has-[>svg]:px-0' variant="ghost" onClick={() => requestSort('progress')}>
-    Progresso
-    {getSortIcon('progress')}
-  </Button>
-</TableHead>
+              <Button
+                className="px-0 has-[>svg]:px-0"
+                variant="ghost"
+                onClick={() => requestSort('progress')}
+              >
+                Progresso
+                {getSortIcon('progress')}
+              </Button>
+            </TableHead>
             <TableHead className="text-gray-700 w-[120px]">
-  <Button className='px-0 has-[>svg]:px-0'  variant="ghost" onClick={() => requestSort('dueDate')}>
-    Data Final
-    {getSortIcon('dueDate')}
-  </Button>
-</TableHead>
-            <TableHead className="text-gray-700 w-[80px] text-right pr-4">Ações</TableHead>
+              <Button
+                className="px-0 has-[>svg]:px-0"
+                variant="ghost"
+                onClick={() => requestSort('dueDate')}
+              >
+                Data Final
+                {getSortIcon('dueDate')}
+              </Button>
+            </TableHead>
+            <TableHead className="text-gray-700 w-[80px] text-right pr-4">
+              Ações
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {sortedProjects.map((project) => (
-                        <TableRow key={project.id}>
+            <TableRow key={project.id}>
               <UpdateProjectModal
                 project={editingProject!}
                 open={!!editingProject && editingProject.id === project.id}
@@ -164,9 +192,11 @@ export const ProjectTable = ({ projects }: ProjectTableProps) => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setEditingProject(project)}>
-  Editar
-</DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setEditingProject(project)}
+                    >
+                      Editar
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Arquivar</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

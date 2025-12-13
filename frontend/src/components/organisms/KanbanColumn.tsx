@@ -15,7 +15,12 @@ interface KanbanColumnProps {
   onTaskUpdated?: () => void;
 }
 
-export const KanbanColumn = ({ id, title, tasks, onTaskUpdated }: KanbanColumnProps) => {
+export const KanbanColumn = ({
+  id,
+  title,
+  tasks,
+  onTaskUpdated,
+}: KanbanColumnProps) => {
   return (
     <div className="flex flex-col w-full max-w-sm min-w-[300px] bg-gray-50 border rounded-lg shadow-inner p-3">
       <div className="flex justify-between items-center mb-4">
@@ -34,7 +39,6 @@ export const KanbanColumn = ({ id, title, tasks, onTaskUpdated }: KanbanColumnPr
               'flex flex-col gap-3 overflow-y-auto min-h-[150px] transition-colors',
               snapshot.isDraggingOver ? 'bg-gray-100/50 rounded-md' : '',
             )}
-            
           >
             {tasks.map((task, index) => (
               <Draggable key={task.id} draggableId={task.id} index={index}>
@@ -47,7 +51,7 @@ export const KanbanColumn = ({ id, title, tasks, onTaskUpdated }: KanbanColumnPr
                       ...provided.draggableProps.style,
                       opacity: snapshot.isDragging ? 0.8 : 1,
                     }}
-                    className='gap-1'
+                    className="gap-1"
                   >
                     <TaskCard
                       id={task.id}

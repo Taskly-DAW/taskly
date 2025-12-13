@@ -8,7 +8,14 @@ import {
 import { useShallow } from 'zustand/react/shallow';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Legend,
+  Tooltip,
+} from 'recharts';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -91,10 +98,7 @@ export const StatusDistributionChart = () => {
                   stroke="none"
                 >
                   {data.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={entry.color}
-                    />
+                    <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />

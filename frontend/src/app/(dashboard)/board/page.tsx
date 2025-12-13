@@ -9,17 +9,24 @@ import { useEffect } from 'react';
 import { AddTaskModal } from '@/components/organisms/AddTaskModal/AddTaskModal';
 
 const COLUMNS = [
-  { id: "A Fazer", title: "A Fazer" },
-  { id: "Em Progresso", title: "Em Progresso" },
-  { id: "Bloqueadas", title: "Bloqueadas" },
-  { id: "Concluído", title: "Concluído" },
+  { id: 'A Fazer', title: 'A Fazer' },
+  { id: 'Em Progresso', title: 'Em Progresso' },
+  { id: 'Bloqueadas', title: 'Bloqueadas' },
+  { id: 'Concluído', title: 'Concluído' },
 ];
 
 export default function TasksPage() {
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
-  
-  const { tasks, moveTask, fetchTasks, fetchTasksByProject, fetchProjects, updateTaskStatus } = useDashboardStore(
+
+  const {
+    tasks,
+    moveTask,
+    fetchTasks,
+    fetchTasksByProject,
+    fetchProjects,
+    updateTaskStatus,
+  } = useDashboardStore(
     useShallow((state) => ({
       tasks: state.tasks,
       moveTask: state.moveTask,
@@ -27,7 +34,7 @@ export default function TasksPage() {
       fetchTasksByProject: state.fetchTasksByProject,
       fetchProjects: state.fetchProjects,
       updateTaskStatus: state.updateTaskStatus,
-    }))
+    })),
   );
 
   useEffect(() => {
@@ -39,7 +46,7 @@ export default function TasksPage() {
         await fetchTasks();
       }
     };
-    
+
     loadTasks();
   }, [projectId, fetchTasks, fetchTasksByProject, fetchProjects]);
 
@@ -57,7 +64,8 @@ export default function TasksPage() {
     await updateTaskStatus(draggableId, destination.droppableId);
   };
 
-  const projectName = tasks.length > 0 ? tasks[0].projectName : 'Todas as Tarefas';
+  const projectName =
+    tasks.length > 0 ? tasks[0].projectName : 'Todas as Tarefas';
 
   const handleTaskAdded = () => {
     if (projectId) {
@@ -83,12 +91,12 @@ export default function TasksPage() {
         </h1>
         {projectId && <AddTaskModal onTaskAdded={handleTaskAdded} />}
       </div>
-      
+
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex gap-6 overflow-x-auto h-full pb-4">
           {COLUMNS.map((col) => {
             const columnTasks = tasks.filter((task) => task.status === col.id);
-            
+
             return (
               <KanbanColumn
                 key={col.id}

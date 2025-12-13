@@ -11,9 +11,9 @@ export interface User {
 
 export const authService = {
   getToken: (): string | null => {
-    const token = localStorage.getItem('auth-storage')
-    
-    return token ? JSON.parse(token) : null
+    const token = localStorage.getItem('auth-storage');
+
+    return token ? JSON.parse(token) : null;
   },
 
   getTenantId: (): string | null => {
@@ -27,24 +27,24 @@ export const authService = {
     if (!token) {
       throw new Error('Token de autenticação ou tenantId não encontrado');
     }
-    
+
     try {
       const response = await fetch(`${API_BASE_URL}/auth/auth/users/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token.state.token}`,
-          'x-tenant-id': "",
+          Authorization: `Bearer ${token.state.token}`,
+          'x-tenant-id': '',
         },
       });
 
       if (!response.ok) {
         throw new Error(`Erro ao buscar usuários: ${response.statusText}`);
       }
-      
+
       const users: User[] = await response.json();
-      
-      return users.map(user => ({
+
+      return users.map((user) => ({
         value: user.id.toString(),
         label: user.username || user.email,
       }));

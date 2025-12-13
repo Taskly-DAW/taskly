@@ -1,24 +1,30 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Folder, ListChecks, BarChart2, Users } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Folder,
+  ListChecks,
+  BarChart2,
+  Users,
+} from 'lucide-react';
 import { SidebarItem } from '@/components/molecules/SidebarItem';
 
 const routes = [
   {
     icon: LayoutDashboard,
-    label: "Painel",
-    href: "/",
+    label: 'Painel',
+    href: '/',
   },
   {
     icon: Folder,
-    label: "Projetos",
-    href: "/projects",
+    label: 'Projetos',
+    href: '/projects',
   },
   {
     icon: Users,
-    label: "Usuários",
-    href: "/users",
+    label: 'Usuários',
+    href: '/users',
   },
   // {
   //   icon: ListChecks,
@@ -27,8 +33,8 @@ const routes = [
   // },
   {
     icon: BarChart2,
-    label: "Relatórios",
-    href: "/reports",
+    label: 'Relatórios',
+    href: '/reports',
   },
 ];
 
@@ -37,10 +43,9 @@ export const Sidebar = () => {
 
   return (
     <div className="flex flex-col h-screen bg-white border-r shadow-sm w-[240px]">
-      
       <div className="flex items-center h-16 p-4 border-b">
         <span className="text-2xl font-bold text-blue-600">
-          <span className='mr-1'>*</span>Taskly
+          <span className="mr-1">*</span>Taskly
         </span>
       </div>
 
@@ -51,7 +56,7 @@ export const Sidebar = () => {
             icon={route.icon}
             label={route.label}
             href={route.href}
-            isActive={pathname === route.href} 
+            isActive={pathname === route.href}
           />
         ))}
       </div>

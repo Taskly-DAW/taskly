@@ -1,5 +1,5 @@
-export type Priority = "Alta" | "Média" | "Baixa";
-export type Status = "A Fazer" | "Em Progresso" | "Concluído";
+export type Priority = 'Alta' | 'Média' | 'Baixa';
+export type Status = 'A Fazer' | 'Em Progresso' | 'Concluído';
 
 export interface Task {
   id: string;

@@ -15,7 +15,7 @@ export const MetricValue = ({
   const isPositive = percentage >= 0;
   const percentageDisplay = `${isPositive ? '+' : ''}${percentage.toFixed(1)}% do mês passado`;
 
-  let colorClass = "";
+  let colorClass = '';
 
   if (isInverter) {
     colorClass = isPositive
@@ -33,9 +33,7 @@ export const MetricValue = ({
         {value.toLocaleString('pt-BR')}
       </div>
 
-      <div
-        className={cn('flex items-center text-sm font-medium', colorClass)}
-      >
+      <div className={cn('flex items-center text-sm font-medium', colorClass)}>
         {isPositive && !isInverter ? (
           <ArrowUp className="h-4 w-4 mr-1" />
         ) : (

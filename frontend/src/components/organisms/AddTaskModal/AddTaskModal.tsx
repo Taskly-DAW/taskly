@@ -41,13 +41,13 @@ export const AddTaskModal = ({ onTaskAdded }: AddTaskModalProps) => {
     status: 'todo' as 'todo' | 'doing' | 'block' | 'done',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim() || !projectId) {
       return;
     }
@@ -79,7 +79,7 @@ export const AddTaskModal = ({ onTaskAdded }: AddTaskModalProps) => {
         description: '',
         status: 'todo',
       });
-      
+
       setOpen(false);
       onTaskAdded?.();
     } catch (error) {
@@ -90,7 +90,7 @@ export const AddTaskModal = ({ onTaskAdded }: AddTaskModalProps) => {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -135,7 +135,7 @@ export const AddTaskModal = ({ onTaskAdded }: AddTaskModalProps) => {
             <Label htmlFor="status">Status *</Label>
             <Select
               value={formData.status}
-              onValueChange={(value: 'todo' | 'doing' | 'block' | 'done') => 
+              onValueChange={(value: 'todo' | 'doing' | 'block' | 'done') =>
                 handleInputChange('status', value)
               }
             >

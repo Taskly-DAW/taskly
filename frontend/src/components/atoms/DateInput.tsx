@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/input";
-import { CalendarIcon } from "lucide-react";
+import { Input } from '@/components/ui/input';
+import { CalendarIcon } from 'lucide-react';
 
 export default function DateInput({ value, onChange }: any) {
   return (

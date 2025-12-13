@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface User {
   id?: number;
@@ -38,7 +44,7 @@ export default function UsersPage() {
   const [formData, setFormData] = useState<UserFormData>({
     username: '',
     email: '',
-    roles: []
+    roles: [],
   });
 
   const getToken = (): string | null => {
@@ -57,7 +63,7 @@ export default function UsersPage() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'x-tenant-id': '',
         },
       });
@@ -86,10 +92,14 @@ export default function UsersPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'x-tenant-id': '',
         },
-        body: JSON.stringify({...userData, password: "12345678", tenant_id: ""}),
+        body: JSON.stringify({
+          ...userData,
+          password: '12345678',
+          tenant_id: '',
+        }),
       });
 
       if (!response.ok) {
@@ -111,15 +121,18 @@ export default function UsersPage() {
         throw new Error('Token de autenticação não encontrado');
       }
 
-      const response = await fetch(`${API_BASE_URL}/auth/auth/users/${userId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          'x-tenant-id': '',
+      const response = await fetch(
+        `${API_BASE_URL}/auth/auth/users/${userId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            'x-tenant-id': '',
+          },
+          body: JSON.stringify(userData),
         },
-        body: JSON.stringify(userData),
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`Erro ao atualizar usuário: ${response.statusText}`);
@@ -144,14 +157,17 @@ export default function UsersPage() {
         throw new Error('Token de autenticação não encontrado');
       }
 
-      const response = await fetch(`${API_BASE_URL}/auth/auth/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          'x-tenant-id': '',
+      const response = await fetch(
+        `${API_BASE_URL}/auth/auth/users/${userId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            'x-tenant-id': '',
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`Erro ao excluir usuário: ${response.statusText}`);
@@ -176,7 +192,7 @@ export default function UsersPage() {
     setFormData({
       username: '',
       email: '',
-      roles: []
+      roles: [],
     });
     setEditingUser(null);
   };
@@ -186,7 +202,7 @@ export default function UsersPage() {
     setFormData({
       username: user.username,
       email: user.email,
-      roles: user.roles
+      roles: user.roles,
     });
     setIsModalOpen(true);
   };
@@ -196,9 +212,10 @@ export default function UsersPage() {
     setIsModalOpen(true);
   };
 
-  const filteredUsers = users.filter(user =>
-    user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   useEffect(() => {
@@ -234,7 +251,9 @@ export default function UsersPage() {
             <Card key={user.id} className="p-6">
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-900">{user.username}</h3>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {user.username}
+                  </h3>
                   <p className="text-gray-600">{user.email}</p>
                   <div className="flex gap-2">
                     {user.roles.map((role) => (
@@ -283,7 +302,9 @@ export default function UsersPage() {
                 </label>
                 <Input
                   value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -294,7 +315,9 @@ export default function UsersPage() {
                 <Input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -304,7 +327,9 @@ export default function UsersPage() {
                 </label>
                 <Select
                   value={formData.roles[0] || ''}
-                  onValueChange={(value) => setFormData({ ...formData, roles: [value] })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, roles: [value] })
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma função" />
