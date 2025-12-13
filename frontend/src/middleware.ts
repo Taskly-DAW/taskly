@@ -5,11 +5,11 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('auth-token')?.value;
 
   const signInUrl = new URL('/login', request.url);
-  const signUpUrl = new URL('/register', request.url);
+  const signUpUrl = new URL('/signup', request.url);
   const dashboardUrl = new URL('/', request.url);
 
   const isLoginPage = request.nextUrl.pathname === '/login';
-  const isRegisterPage = request.nextUrl.pathname === '/register';
+  const isRegisterPage = request.nextUrl.pathname === '/signup';
   const isPublicPage = isLoginPage || isRegisterPage;
 
   if (!token && !isPublicPage) {

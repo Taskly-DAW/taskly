@@ -114,7 +114,7 @@ export const LoginForm = () => {
         <p className="text-center text-sm text-gray-600 w-full">
           Não tem uma conta?{' '}
           <a
-            href="/register"
+            href="/signup"
             className="text-blue-600 font-semibold hover:underline"
           >
             Cadastre-se

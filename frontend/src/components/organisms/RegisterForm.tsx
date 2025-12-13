@@ -79,7 +79,7 @@ export const RegisterForm = () => {
             )}
           </div>
 
-          {/* <div className="space-y-2">
+          <div className="space-y-2">
             <Label htmlFor="email">E-mail</Label>
             <Input
               id="email"
@@ -92,7 +92,7 @@ export const RegisterForm = () => {
                 {errors.email.message}
               </span>
             )}
-          </div> */}
+          </div>
 
           <div className="space-y-2">
             <Label htmlFor="password">Senha</Label>
